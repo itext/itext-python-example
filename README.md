@@ -1,24 +1,36 @@
 # Intro
 
-Just showcasing how to use iText 9 in a Python environment
+This aims to create a pip package for iText 9 distribution
 
 
-# Installation
+# Build 
 
-I've done this on a Mac environment, using Python 3.13.2
+To build the package, just run:
 
-You will basically need [pythonnet](https://pypi.org/project/pythonnet/)
 ```
-pip install -r requirements.txt
-```
-
-and a .NET running environment
-```
-brew install mono
+python -m build
 ```
 
+which should create a:
 
-And then you just need all the required .dlls which you will place on this folder. You can get away with just:
+```
+./dist/itext_python-9.1.0-py3-none-any.whl
+```
+
+file, that then you can install by using
+
+```
+pip install ./dist/itext_python-9.1.0-py3-none-any.whl
+```
+
+
+# Limitations
+
+* You still need to download the DDLs file yourself (TODO)
+* The way the packages are exposed, everything is under the same namespace, which can be confusing
+
+
+# Needed DLLs
 
 * BouncyCastle.Cryptography.dll
 * Microsoft.DotNet.PlatformAbstractions.dll
@@ -32,5 +44,3 @@ And then you just need all the required .dlls which you will place on this folde
 * itext.io.dll
 * itext.kernel.dll
 * itext.layout.dll
-
-

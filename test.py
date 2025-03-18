@@ -1,18 +1,10 @@
-import clr
-import os
-import sys
-
-# Add the current directory to the system path
-sys.path.append(os.getcwd())
-
-# Load the iText DLLs
-clr.AddReference("itext.kernel")
-clr.AddReference("itext.layout")
+import itext_python
+from itext_python import PdfWriter, PdfDocument, Document, Paragraph
 
 # Import necessary namespaces
-from iText.Kernel.Pdf import PdfWriter, PdfDocument
-from iText.Layout import Document
-from iText.Layout.Element import Paragraph
+#from iText.Kernel.Pdf import PdfWriter, PdfDocument
+#from iText.Layout import Document
+#from iText.Layout.Element import Paragraph
 
 # Example: Create a simple PDF document
 def create_pdf(output_path):
