@@ -1,5 +1,4 @@
 import os
-import sys
 from pathlib import Path
 
 # Add DLL directory to PATH
@@ -9,15 +8,15 @@ os.environ["PATH"] += os.pathsep + str(dll_path)
 # Initialize pythonnet runtime
 import clr
 clr.AddReference("System.IO")
-from System.IO import Path as SysPath
 
 # Load required iText assemblies
 clr.AddReference(str(dll_path / "itext.kernel.dll"))
 clr.AddReference(str(dll_path / "itext.layout.dll"))
 
 # Expose iText namespaces directly
-from iText.Kernel.Pdf import PdfWriter, PdfReader, PdfDocument
-from iText.Layout import Document
-from iText.Layout.Element import Paragraph
+from iText.Kernel.Pdf import *
+from iText.Layout import *
+from iText.Layout.Element import *
 
-__all__ = ['PdfWriter', 'PdfReader', 'Document', 'Paragraph', 'PdfDocument']
+__all__ = [name for name in dir() if not name.startswith("_")]
+
