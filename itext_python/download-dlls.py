@@ -4,7 +4,7 @@ import io
 import os
 from typing import List, Tuple
 
-itext_version = "9.1.0"
+itext_version = "9.1.0" #versions for dependencies are hard coded below. sry.
 dll_path = "dlls"
 
 
@@ -79,3 +79,55 @@ dll_list = [
 ]
 
 download_and_extract_dll(nuget_package_url, dll_list)
+
+
+
+#########
+nuget_package_url = ("https://www.nuget.org/api/v2/package/BouncyCastle.Cryptography/2.0.0")
+dll_list = [
+    ("lib/netstandard2.0/BouncyCastle.Cryptography.dll", dll_path + "/BouncyCastle.Cryptography.dll"),
+]
+download_and_extract_dll(nuget_package_url, dll_list)
+#########
+
+#########
+nuget_package_url = ("https://www.nuget.org/api/v2/package/Microsoft.DotNet.PlatformAbstractions/1.1.0")
+dll_list = [
+    ("lib/netstandard1.3/Microsoft.DotNet.PlatformAbstractions.dll", dll_path + "/Microsoft.DotNet.PlatformAbstractions.dll"),
+]
+download_and_extract_dll(nuget_package_url, dll_list)
+#########
+
+
+#########
+nuget_package_url = ("https://www.nuget.org/api/v2/package/Microsoft.Extensions.DependencyModel/1.1.0")
+dll_list = [
+    ("lib/netstandard1.6/Microsoft.Extensions.DependencyModel.dll", dll_path + "/Microsoft.Extensions.DependencyModel.dll"),
+]
+download_and_extract_dll(nuget_package_url, dll_list)
+#########
+
+
+#########
+nuget_package_url = ("https://www.nuget.org/api/v2/package/Microsoft.Extensions.Logging.Abstractions/5.0.0")
+dll_list = [
+     ("lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll", dll_path + "/Microsoft.Extensions.Logging.Abstractions.dll"),
+]
+download_and_extract_dll(nuget_package_url, dll_list)
+#########
+
+#########
+nuget_package_url = ("https://www.nuget.org/api/v2/package/Microsoft.Extensions.Logging/5.0.0")
+dll_list = [
+     ("lib/netstandard2.0/Microsoft.Extensions.Logging.dll", dll_path + "/Microsoft.Extensions.Logging.dll"),
+]
+download_and_extract_dll(nuget_package_url, dll_list)
+#########
+
+#########
+nuget_package_url = ("https://www.nuget.org/api/v2/package/Microsoft.Extensions.Options/5.0.0")
+dll_list = [
+     ("lib/netstandard2.0/Microsoft.Extensions.Options.dll", dll_path + "/Microsoft.Extensions.Options.dll"),
+]
+download_and_extract_dll(nuget_package_url, dll_list)
+#########
