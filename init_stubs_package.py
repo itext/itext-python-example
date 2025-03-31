@@ -126,6 +126,19 @@ def prepare_tools(dotnet_path: str) -> None:
     eprint('--- Extracting PythonNetStubGenerator.Tool...')
     with ZipFile(str(TOOLS_DIR / f'{PYTHONNET_STUB_GENERATOR_BASENAME}.zip')) as tool_zip:
         tool_zip.extractall(str(TOOLS_DIR))
+    proj_dir = TOOLS_DIR / f'{PYTHONNET_STUB_GENERATOR_BASENAME}' / 'csharp' / 'PythonNetStubTool'
+
+    # See https://github.com/dotnet/sdk/issues/10053
+    eprint('--- Patching PythonNetStubGenerator.Tool...')
+    proj_file = proj_dir / 'PythonNetStubGenerator.Tool.csproj'
+    with open(str(proj_file), 'rt', encoding='utf-8') as f:
+        proj_text = f.read()
+    proj_text = proj_text.replace(
+        '<PackAsTool>true</PackAsTool>',
+        '<PackAsTool>false</PackAsTool>',
+    )
+    with open(str(proj_file), 'wt', encoding='utf-8', newline='\n') as f:
+        f.write(proj_text)
 
     eprint('--- Building PythonNetStubGenerator.Tool...')
     subprocess.run(
@@ -133,6 +146,7 @@ def prepare_tools(dotnet_path: str) -> None:
             dotnet_path, 'publish',
             str(TOOLS_DIR / 'pythonnet-stub-generator-1.2.1' / 'csharp' / 'PythonNetStubTool'),
             '--nologo',
+            '--use-current-runtime',
             '--configuration', 'Release',
             '--output', str(TOOLS_DIR / 'bin'),
         ),
