@@ -173,6 +173,15 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+# .NET tools directory (like pythonnet-stub-generator)
+/tools
 
-*.dll
-output.pdf
+# Temporary python typing stubs directory
+/stubs
+
+# Final python typing stubs directory
+# For now it is only auto-generated
+/iText-stubs
+
+# Random test PDF files in root
+/*.pdf

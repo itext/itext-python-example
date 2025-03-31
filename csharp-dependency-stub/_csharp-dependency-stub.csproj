@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU</Platforms>
+    <RootNamespace>_csharp_dependency_stub</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="itext" Version="9.1.0" />
+    <PackageReference Include="itext.bouncy-castle-adapter" Version="9.1.0" />
+    <PackageReference Include="itext.pdfhtml" Version="6.1.0" />
+  </ItemGroup>
+</Project>

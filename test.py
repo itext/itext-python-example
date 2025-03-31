@@ -1,10 +1,15 @@
-import itext_python
-from itext_python import PdfWriter, PdfDocument, Document, Paragraph
+# Uncomment this block, if you wish to force the .NET Core runtime
+# import pythonnet
+# pythonnet.load('coreclr')
+
+import itextpy
+itextpy.load()
 
 # Import necessary namespaces
-#from iText.Kernel.Pdf import PdfWriter, PdfDocument
-#from iText.Layout import Document
-#from iText.Layout.Element import Paragraph
+from iText.Kernel.Pdf import PdfWriter, PdfDocument
+from iText.Layout import Document
+from iText.Layout.Element import Paragraph
+
 
 # Example: Create a simple PDF document
 def create_pdf(output_path):
@@ -18,6 +23,7 @@ def create_pdf(output_path):
 
     # Close the document
     document.Close()
+
 
 # Call the function to create a PDF
 create_pdf("output.pdf")
