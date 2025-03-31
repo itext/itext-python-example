@@ -70,3 +70,7 @@ document.Close()
   * `itext.pdfhtml`
 * You need to manually run `init_packages.py` before the wheel build. Ideally,
   it should get called automatically before the build.
+* Current 9.1.0 build contains a bug, which prevent running iText with .NET
+  Core under Python.NET. For now we have a workaround here with a binary patch.
+  Patch is done with the `patch_itext_io.py` script. So the `itext.io.dll`
+  binary is not the same, as the one from NuGet. 
