@@ -4,10 +4,12 @@ import platform
 import subprocess
 import shutil
 import sys
+import urllib.request
 
 from glob import glob
 from os.path import getmtime
 from pathlib import Path
+from zipfile import ZipFile
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 # Directory for the .NET tools
@@ -20,6 +22,10 @@ TEMP_STUBS_DIR = SCRIPT_DIR / 'stubs'
 ITEXT_PY_PACKAGE_DIR = SCRIPT_DIR / 'itextpy'
 # Path to the root directory for "itextpy" binaries
 ITEXT_PY_BINARIES_DIR = ITEXT_PY_PACKAGE_DIR / 'binaries'
+
+# Link for downloading PythonNetStubGenerator.Tool sources
+TOOL_SRC_DOWNLOAD_LINK = 'https://codeload.github.com/MHDante/pythonnet-stub-generator/zip/refs/tags/1.2.1'
+PYTHONNET_STUB_GENERATOR_BASENAME = 'pythonnet-stub-generator-1.2.1'
 
 
 def eprint(*args, **kwargs) -> None:
@@ -39,6 +45,13 @@ def system() -> str:
         return platform.system()
 
 
+def rmtree_if_exists(f: str) -> None:
+    try:
+        shutil.rmtree(f)
+    except FileNotFoundError:
+        pass
+
+
 def get_python_net_stub_generator_path() -> Path:
     """
     Returns the expected full path to the PythonNetStubGenerator.Tool binary.
@@ -47,7 +60,7 @@ def get_python_net_stub_generator_path() -> Path:
         exe_suffix = '.exe'
     else:
         exe_suffix = ''
-    return TOOLS_DIR / ('GeneratePythonNetStubs' + exe_suffix)
+    return TOOLS_DIR / 'bin' / ('PythonNetStubGenerator.Tool' + exe_suffix)
 
 
 def is_itext_py_missing() -> bool:
@@ -88,26 +101,45 @@ def require_dotnet() -> str | None:
     return dotnet_path
 
 
-#
-def install_tools(dotnet_path: str) -> None:
+def prepare_tools(dotnet_path: str) -> None:
     """
-    Installs the PythonNetStubGenerator.Tool, if it doesn't exist.
+    Downloads and builds the PythonNetStubGenerator.Tool, if it doesn't exist.
     """
+    eprint('Preparing PythonNetStubGenerator.Tool...')
+
     tool_path = get_python_net_stub_generator_path()
     if tool_path.exists():
-        eprint('PythonNetStubGenerator.Tool is already installed.')
+        eprint('--- PythonNetStubGenerator.Tool is already built.')
         return
-    eprint('Installing PythonNetStubGenerator.Tool...')
+
+    eprint('--- Cleaning old tools...')
+    (TOOLS_DIR / f'{PYTHONNET_STUB_GENERATOR_BASENAME}.zip').unlink(missing_ok=True)
+    rmtree_if_exists(str(TOOLS_DIR / PYTHONNET_STUB_GENERATOR_BASENAME))
+    rmtree_if_exists(str(TOOLS_DIR / 'bin'))
+
+    eprint('--- Downloading PythonNetStubGenerator.Tool...')
+    TOOLS_DIR.mkdir(exist_ok=True)
+    with urllib.request.urlopen(TOOL_SRC_DOWNLOAD_LINK) as tool_response:
+        with open(str(TOOLS_DIR / f'{PYTHONNET_STUB_GENERATOR_BASENAME}.zip'), 'xb') as tool_file:
+            tool_file.write(tool_response.read())
+
+    eprint('--- Extracting PythonNetStubGenerator.Tool...')
+    with ZipFile(str(TOOLS_DIR / f'{PYTHONNET_STUB_GENERATOR_BASENAME}.zip')) as tool_zip:
+        tool_zip.extractall(str(TOOLS_DIR))
+
+    eprint('--- Building PythonNetStubGenerator.Tool...')
     subprocess.run(
         args=(
-            dotnet_path, 'tool', 'install',
-            'PythonNetStubGenerator.Tool',
-            '--version', '1.2.1',
-            '--tool-path', str(TOOLS_DIR),
+            dotnet_path, 'publish',
+            str(TOOLS_DIR / 'pythonnet-stub-generator-1.2.1' / 'csharp' / 'PythonNetStubTool'),
+            '--nologo',
+            '--configuration', 'Release',
+            '--output', str(TOOLS_DIR / 'bin'),
         ),
         check=True,
     )
-    eprint('--- PythonNetStubGenerator.Tool has been installed.')
+
+    eprint('--- PythonNetStubGenerator.Tool has been built.')
 
 
 def clean_temp_stubs() -> None:
@@ -115,10 +147,7 @@ def clean_temp_stubs() -> None:
     Cleans-up the temporary stubs directory.
     """
     eprint('Cleaning temporary stubs...')
-    try:
-        shutil.rmtree(str(TEMP_STUBS_DIR))
-    except FileNotFoundError:
-        pass
+    rmtree_if_exists(str(TEMP_STUBS_DIR))
     eprint('--- Temporary stubs cleaned.')
 
 
@@ -156,10 +185,8 @@ def clean_final_stubs() -> None:
     """
     Cleans-up the final stubs directory.
     """
-    try:
-        shutil.rmtree(str(FINAL_STUBS_DIR))
-    except FileNotFoundError:
-        pass
+    eprint('Cleaning final stubs...')
+    rmtree_if_exists(str(FINAL_STUBS_DIR))
     eprint('--- Final stubs cleaned.')
 
 
@@ -185,7 +212,7 @@ def run() -> int:
     dotnet_path = require_dotnet()
     if dotnet_path is None:
         return 1
-    install_tools(dotnet_path)
+    prepare_tools(dotnet_path)
     clean_temp_stubs()
     generate_stubs()
     clean_final_stubs()
