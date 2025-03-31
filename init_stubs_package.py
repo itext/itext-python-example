@@ -104,7 +104,8 @@ def install_tools(dotnet_path: str) -> None:
             'PythonNetStubGenerator.Tool',
             '--version', '1.2.1',
             '--tool-path', str(TOOLS_DIR),
-        )
+        ),
+        check=True,
     )
     eprint('--- PythonNetStubGenerator.Tool has been installed.')
 
@@ -137,7 +138,7 @@ def generate_stubs() -> None:
     dlls = list(glob('itext.*.dll', root_dir=ITEXT_PY_BINARIES_DIR))
     if not dlls:
         raise Exception('No iText dlls found.')
-    result = subprocess.run(
+    subprocess.run(
         args=(
             get_python_net_stub_generator_path(),
             '--dest-path', TEMP_STUBS_DIR,
@@ -146,14 +147,8 @@ def generate_stubs() -> None:
             '--target-dlls', ','.join(dlls)
         ),
         cwd=str(ITEXT_PY_BINARIES_DIR),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
+        check=True,
     )
-    eprint(result.stdout)
-    # For some reason it doesn't change the exit code...
-    if 'error' in result.stdout.lower():
-        raise Exception('Stub generation failed')
     eprint('--- Intermediate stubs have been generated.')
 
 

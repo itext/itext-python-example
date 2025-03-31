@@ -126,6 +126,7 @@ def publish_stub(dotnet_path: str) -> None:
                     '--framework', FRAMEWORK,
                     '--runtime', runtime,
                 ),
+                check=True,
             )
     eprint('--- Stub project has been published for all runtimes')
 
