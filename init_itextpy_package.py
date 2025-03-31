@@ -115,7 +115,7 @@ def publish_stub(dotnet_path: str) -> None:
     for os, architectures in RUNTIMES.items():
         for arch in architectures:
             runtime = '-'.join((os, arch))
-            eprint(f'--- Publishing for {runtime}-...')
+            eprint(f'--- Publishing for {runtime}...')
             subprocess.run(
                 args=(
                     dotnet_path, 'publish',
