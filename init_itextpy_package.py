@@ -328,18 +328,10 @@ def generate_init_file(binaries: defaultdict[str, set[str]]) -> bool:
 
     lines = [
         "# !!! THIS FILE IS AUTO-GENERATED, DO NOT EDIT !!!",
-        "import os as _os",
-        "import platform as _platform",
         "import pathlib as _pathlib",
+        "from . import _util",
         "",
         "_BINARIES = _pathlib.Path(__file__).parent / 'binaries'",
-        "",
-        "",
-        "def _system() -> str:",
-        "    try:",
-        "        return _os.uname().sysname",
-        "    except AttributeError:",
-        "        return _platform.system()",
         "",
         "",
         "def load() -> None:",
@@ -349,24 +341,26 @@ def generate_init_file(binaries: defaultdict[str, set[str]]) -> bool:
         "    This function imports clr, so if you wish to customise your .NET runtime",
         "    configuration, it should be done before calling this function.",
         '    """',
+        "    system_name = _util.system()",
+        "    _util.set_default_runtime(system_name)",
         "    import clr",
-        "",
     ]
     for dll in sorted(binaries['any']):
         lines.append(f"    clr.AddReference(str(_BINARIES / '{escape_quote(dll)}'))")
     for os, system in (('win', 'Windows'), ('linux', 'Linux'), ('osx', 'Darwin')):
         if binaries[os]:
-            lines.append(f"    if _system() == '{escape_quote(system)}':")
+            lines.append(f"    if system_name == '{escape_quote(system)}':")
             for dll in sorted(binaries[os]):
                 lines.append(f"        clr.AddReference(str(_BINARIES / '{escape_quote(os)}' / '{escape_quote(dll)}'))")
     lines.extend((
         "",
         "",
         "__all__ = ('load',)",
-        "",
     ))
     with open(PACKAGE_DIR / '__init__.py', 'xt', encoding='utf-8', newline='\n') as init_py:
-        init_py.write('\n'.join(lines))
+        for line in lines:
+            init_py.write(line)
+            init_py.write('\n')
 
     eprint('--- Adding .generated success mark file')
     open(PACKAGE_DIR / '.generated', 'x').close()
