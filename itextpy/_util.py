@@ -26,9 +26,9 @@ def set_default_runtime(system_name: str) -> None:
     platforms, unless the runtime was already explicitly specified or if there
     is an env var override present.
     """
-    if ((system_name != 'Windows')
-            and (pythonnet.get_runtime_info() is not None)
-            and ('PYTHONNET_RUNTIME' not in os.environ)):
+    if pythonnet.get_runtime_info() is not None:
+        return
+    if (system_name != 'Windows') and ('PYTHONNET_RUNTIME' not in os.environ):
         pythonnet.set_runtime('coreclr')
     else:
         pythonnet.set_runtime_from_env()
