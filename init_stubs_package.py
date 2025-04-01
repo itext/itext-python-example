@@ -24,8 +24,9 @@ ITEXT_PY_PACKAGE_DIR = SCRIPT_DIR / 'itextpy'
 ITEXT_PY_BINARIES_DIR = ITEXT_PY_PACKAGE_DIR / 'binaries'
 
 # Link for downloading PythonNetStubGenerator.Tool sources
-TOOL_SRC_DOWNLOAD_LINK = 'https://codeload.github.com/MHDante/pythonnet-stub-generator/zip/refs/tags/1.2.1'
-PYTHONNET_STUB_GENERATOR_BASENAME = 'pythonnet-stub-generator-1.2.1'
+# This is a commit-pinned link to our fork
+TOOL_SRC_DOWNLOAD_LINK = 'https://codeload.github.com/Eswcvlad/pythonnet-stub-generator/zip/5d2e3fb7701a03a4ddac69f542eae19317cc3270'
+PYTHONNET_STUB_GENERATOR_BASENAME = 'pythonnet-stub-generator-5d2e3fb7701a03a4ddac69f542eae19317cc3270'
 
 
 def eprint(*args, **kwargs) -> None:
@@ -126,27 +127,15 @@ def prepare_tools(dotnet_path: str) -> None:
     eprint('--- Extracting PythonNetStubGenerator.Tool...')
     with ZipFile(str(TOOLS_DIR / f'{PYTHONNET_STUB_GENERATOR_BASENAME}.zip')) as tool_zip:
         tool_zip.extractall(str(TOOLS_DIR))
-    proj_dir = TOOLS_DIR / f'{PYTHONNET_STUB_GENERATOR_BASENAME}' / 'csharp' / 'PythonNetStubTool'
-
-    # See https://github.com/dotnet/sdk/issues/10053
-    eprint('--- Patching PythonNetStubGenerator.Tool...')
-    proj_file = proj_dir / 'PythonNetStubGenerator.Tool.csproj'
-    with open(str(proj_file), 'rt', encoding='utf-8') as f:
-        proj_text = f.read()
-    proj_text = proj_text.replace(
-        '<PackAsTool>true</PackAsTool>',
-        '<PackAsTool>false</PackAsTool>',
-    )
-    with open(str(proj_file), 'wt', encoding='utf-8', newline='\n') as f:
-        f.write(proj_text)
 
     eprint('--- Building PythonNetStubGenerator.Tool...')
     subprocess.run(
         args=(
             dotnet_path, 'publish',
-            str(TOOLS_DIR / 'pythonnet-stub-generator-1.2.1' / 'csharp' / 'PythonNetStubTool'),
+            str(TOOLS_DIR / PYTHONNET_STUB_GENERATOR_BASENAME / 'csharp' / 'PythonNetStubTool'),
             '--nologo',
             '--use-current-runtime',
+            '--self-contained',
             '--configuration', 'Release',
             '--output', str(TOOLS_DIR / 'bin'),
         ),
@@ -187,7 +176,8 @@ def generate_stubs() -> None:
             '--dest-path', TEMP_STUBS_DIR,
             '--search-paths', str(ITEXT_PY_BINARIES_DIR),
             '--search-paths', str(ITEXT_PY_BINARIES_DIR / os_id),
-            '--target-dlls', ','.join(dlls)
+            '--target-dlls', ','.join(dlls),
+            '--force-lf',
         ),
         cwd=str(ITEXT_PY_BINARIES_DIR),
         check=True,
