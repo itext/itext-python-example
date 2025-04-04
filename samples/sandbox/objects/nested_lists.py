@@ -1,5 +1,4 @@
 import itextpy
-
 itextpy.load()
 
 import contextlib
