@@ -17,8 +17,9 @@ setup(
             '**/*.pyi',
         ],
     },
-    install_requires=[
-        "pythonnet>=3.0"  # Essential pythonnet dependency
-    ],
+    install_requires=(
+        "pythonnet>=3.0",       # Essential pythonnet dependency
+        "dotnet-stubs==0.0.12", # Typing stubs for .NET
+    ),
     entry_points={},
 )
