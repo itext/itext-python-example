@@ -73,6 +73,8 @@ class ColorBlindBlockCssApplier(BlockCssApplier):
     Css applier extending from a blockcssapplier that transforms standard
     colors into the ones colorblind people see.
     """
+    # This is the namespace for this object in .NET
+    # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.PdfHtml"
 
     def __init__(self):
@@ -99,6 +101,8 @@ class ColorBlindBlockCssApplier(BlockCssApplier):
 
 
 class ColorBlindSpanTagCssApplier(SpanTagCssApplier):
+    # This is the namespace for this object in .NET
+    # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.PdfHtml"
 
     def __init__(self):
@@ -125,6 +129,8 @@ class ColorBlindSpanTagCssApplier(SpanTagCssApplier):
 
 
 class ColorBlindnessCssApplierFactory(DefaultCssApplierFactory):
+    # This is the namespace for this object in .NET
+    # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.PdfHtml"
 
     def __init__(self, color_type: str):

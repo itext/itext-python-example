@@ -19,6 +19,8 @@ class QRCodeTagWorker(ITagWorker):
 
     The tag worker processes a **>qr** tag using iText Barcode functionality.
     """
+    # This is the namespace for this object in .NET
+    # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.PdfHtml"
 
     _ALLOWED_ERROR_CORRECTION = ("L", "M", "Q", "H",)
@@ -85,6 +87,8 @@ class QRCodeTagCssApplierFactory(DefaultCssApplierFactory):
     The tag **qr** is mapped on a BlockCssApplier. Every other tag is mapped
     to the default.
     """
+    # This is the namespace for this object in .NET
+    # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.PdfHtml"
 
     def GetCustomCssApplier(self, tag):
@@ -100,6 +104,8 @@ class QRCodeTagWorkerFactory(DefaultTagWorkerFactory):
     The tag **qr** is mapped on a QRCode tag worker. Every other tag is mapped
     to the default.
     """
+    # This is the namespace for this object in .NET
+    # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.PdfHtml"
 
     def GetCustomTagWorker(self, tag, context):
