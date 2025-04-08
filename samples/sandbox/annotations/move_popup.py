@@ -7,7 +7,7 @@ from pathlib import Path
 from iText.Kernel.Pdf import PdfArray, PdfName, PdfReader, PdfWriter, PdfDocument
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
-RESOURCES_DIR = (SCRIPT_DIR / ".." / ".." / "resources").absolute()
+RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 SRC = str(RESOURCES_DIR / "pdfs" / "hello_sticky_note.pdf")
 
 

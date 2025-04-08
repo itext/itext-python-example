@@ -7,7 +7,7 @@ from System.IO import FileAccess, FileMode, FileShare, FileStream
 from iText.Html2pdf import ConverterProperties, HtmlConverter
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
-RESOURCES_DIR = (SCRIPT_DIR / ".." / ".." / "resources").absolute()
+RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 SRC_DIR = RESOURCES_DIR / "pdfhtml" / "rainbow"
 
 

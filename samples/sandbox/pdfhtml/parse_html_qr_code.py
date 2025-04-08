@@ -9,7 +9,7 @@ from iText.Html2pdf import ConverterProperties, HtmlConverter
 from qr_code_tag import QRCodeTagCssApplierFactory, QRCodeTagWorkerFactory
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
-RESOURCES_DIR = (SCRIPT_DIR / ".." / ".." / "resources").absolute()
+RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 SRC_DIR = RESOURCES_DIR / "pdfhtml" / "qrcode"
 
 

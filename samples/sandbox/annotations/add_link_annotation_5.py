@@ -13,7 +13,7 @@ from iText.Layout.Element import Link, Paragraph
 from iText.Layout.Properties import TextAlignment, VerticalAlignment
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
-RESOURCES_DIR = (SCRIPT_DIR / ".." / ".." / "resources").absolute()
+RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 SRC = str(RESOURCES_DIR / "pdfs" / "primes.pdf")
 
 

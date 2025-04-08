@@ -10,7 +10,7 @@ from iText.Kernel.Pdf import PdfDocument, PdfWriter
 from iText.StyledXmlParser.Resolver.Font import BasicFontProvider
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
-RESOURCES_DIR = (SCRIPT_DIR / ".." / ".." / "resources").absolute()
+RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 SRC_DIR = RESOURCES_DIR / "pdfhtml" / "FontExample"
 FONT_DIR = str(SRC_DIR / "font")
 FONT_1_PATH = str(RESOURCES_DIR / "font" / "New Walt Disney.ttf")

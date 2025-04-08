@@ -12,13 +12,13 @@ from iText.Kernel.Colors import ColorConstants
 from iText.Kernel.Font import PdfFontFactory
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
 from iText.Kernel.Pdf.Canvas import PdfCanvas
-from iText.Kernel.Pdf.Event import PdfDocumentEvent
+from iText.Kernel.Pdf.Event import AbstractPdfDocumentEventHandler, PdfDocumentEvent
 from iText.Layout import Canvas, Document
 from iText.Layout.Element import Cell, Paragraph, Table
 from iText.Layout.Properties import TextAlignment, UnitValue, VerticalAlignment
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
-RESOURCES_DIR = (SCRIPT_DIR / ".." / ".." / "resources").absolute()
+RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 DATA_CSV_PATH = str(RESOURCES_DIR / "data" / "united_states.csv")
 
 
@@ -86,11 +86,11 @@ def manipulate_pdf(dest):
 
     with (itext_closing(PdfDocument(PdfWriter(dest))) as pdf_doc,
           itext_closing(Document(pdf_doc)) as doc):
+        watermark_handler = WatermarkingEventHandler()
         # TODO: Does not yet work in Python.NET: https://github.com/pythonnet/pythonnet/issues/2571
-        # pdf_doc.AddEventHandler(PdfDocumentEvent.END_PAGE, WatermarkingEventHandler())
+        # pdf_doc.AddEventHandler(PdfDocumentEvent.END_PAGE, watermark_handler)
         doc.Add(table)
         # TODO: Remove this block, when handler variant is working
-        watermark_handler = WatermarkingEventHandler()
         for page_index in range(pdf_doc.GetNumberOfPages()):
             page = pdf_doc.GetPage(page_index + 1)
             event = PdfDocumentEvent(PdfDocumentEvent.END_PAGE, page)

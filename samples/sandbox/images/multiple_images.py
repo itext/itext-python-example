@@ -11,7 +11,7 @@ from iText.Layout import Document
 from iText.Layout.Element import Image
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
-RESOURCES_DIR = (SCRIPT_DIR / ".." / ".." / "resources").absolute()
+RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 IMAGES = (
     str(RESOURCES_DIR / "img" / "berlin2013.jpg"),
     str(RESOURCES_DIR / "img" / "javaone2013.jpg"),
