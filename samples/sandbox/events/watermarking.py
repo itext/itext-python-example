@@ -30,9 +30,7 @@ def itext_closing(obj):
         obj.Close()
 
 
-# TODO: Does not yet work in Python.NET: https://github.com/pythonnet/pythonnet/issues/2571
-# class WatermarkingEventHandler(AbstractPdfDocumentEventHandler):
-class WatermarkingEventHandler:
+class WatermarkingEventHandler(AbstractPdfDocumentEventHandler):
     # This is the namespace for this object in .NET
     # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.Events"
@@ -87,15 +85,8 @@ def manipulate_pdf(dest):
     with (itext_closing(PdfDocument(PdfWriter(dest))) as pdf_doc,
           itext_closing(Document(pdf_doc)) as doc):
         watermark_handler = WatermarkingEventHandler()
-        # TODO: Does not yet work in Python.NET: https://github.com/pythonnet/pythonnet/issues/2571
-        # pdf_doc.AddEventHandler(PdfDocumentEvent.END_PAGE, watermark_handler)
+        pdf_doc.AddEventHandler(PdfDocumentEvent.END_PAGE, watermark_handler)
         doc.Add(table)
-        # TODO: Remove this block, when handler variant is working
-        for page_index in range(pdf_doc.GetNumberOfPages()):
-            page = pdf_doc.GetPage(page_index + 1)
-            event = PdfDocumentEvent(PdfDocumentEvent.END_PAGE, page)
-            event.SetDocument(pdf_doc)
-            watermark_handler.OnAcceptedEvent(event)
 
 
 if __name__ == "__main__":

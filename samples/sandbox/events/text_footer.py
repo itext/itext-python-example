@@ -25,9 +25,7 @@ def itext_closing(obj):
         obj.Close()
 
 
-# TODO: Does not yet work in Python.NET: https://github.com/pythonnet/pythonnet/issues/2571
-# class TextFooterEventHandler(AbstractPdfDocumentEventHandler):
-class TextFooterEventHandler:
+class TextFooterEventHandler(AbstractPdfDocumentEventHandler):
     # This is the namespace for this object in .NET
     # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.Events"
@@ -73,16 +71,10 @@ def manipulate_pdf(dest):
     with (itext_closing(PdfDocument(PdfWriter(dest))) as pdf_doc,
           itext_closing(Document(pdf_doc)) as doc):
         text_footer_event_handler = TextFooterEventHandler(doc)
-        # TODO: Does not yet work in Python.NET: https://github.com/pythonnet/pythonnet/issues/2571
-        # pdf_doc.AddEventHandler(PdfDocumentEvent.END_PAGE, text_footer_event_handler)
+        pdf_doc.AddEventHandler(PdfDocumentEvent.END_PAGE, text_footer_event_handler)
 
         for i in range(1, 4):
             doc.Add(Paragraph(f"Test {i}"))
-            # TODO: Remove this block, when handler variant is working
-            if True:
-                event = PdfDocumentEvent(PdfDocumentEvent.END_PAGE, pdf_doc.GetLastPage())
-                event.SetDocument(pdf_doc)
-                text_footer_event_handler.OnAcceptedEvent(event)
             if i < 3:
                 doc.Add(AreaBreak())
 
