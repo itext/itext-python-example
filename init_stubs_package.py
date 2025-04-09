@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import os
 import platform
-import subprocess
 import shutil
+import subprocess
 import sys
 import urllib.request
 
@@ -25,8 +25,10 @@ ITEXT_PY_BINARIES_DIR = ITEXT_PY_PACKAGE_DIR / 'binaries'
 
 # Link for downloading PythonNetStubGenerator.Tool sources
 # This is a commit-pinned link to our fork
-TOOL_SRC_DOWNLOAD_LINK = 'https://codeload.github.com/Eswcvlad/pythonnet-stub-generator/zip/5d2e3fb7701a03a4ddac69f542eae19317cc3270'
-PYTHONNET_STUB_GENERATOR_BASENAME = 'pythonnet-stub-generator-5d2e3fb7701a03a4ddac69f542eae19317cc3270'
+PYTHONNET_STUB_GENERATOR_VERSION = '1.2.2'
+PYTHONNET_STUB_GENERATOR_BASENAME_PREFIX = 'pythonnet-stub-generator-'
+PYTHONNET_STUB_GENERATOR_BASENAME = PYTHONNET_STUB_GENERATOR_BASENAME_PREFIX + PYTHONNET_STUB_GENERATOR_VERSION
+PYTHONNET_STUB_GENERATOR_SRC_LINK = 'https://codeload.github.com/Eswcvlad/pythonnet-stub-generator/zip/refs/tags/' + PYTHONNET_STUB_GENERATOR_VERSION
 
 
 def eprint(*args, **kwargs) -> None:
@@ -102,25 +104,46 @@ def require_dotnet() -> str | None:
     return dotnet_path
 
 
+def is_tool_version_correct() -> bool:
+    """
+    Returns whether the installed PythonNetStubGenerator.Tool is of the
+    expected version.
+    """
+    tool_path = get_python_net_stub_generator_path()
+    if not tool_path.exists():
+        return False
+
+    version_run = subprocess.run(
+        args=(tool_path, '--version'),
+        check=True,
+        stdout=subprocess.PIPE,
+        text=True
+    )
+    strip = version_run.stdout.strip()
+    return strip == PYTHONNET_STUB_GENERATOR_VERSION
+
+
 def prepare_tools(dotnet_path: str) -> None:
     """
     Downloads and builds the PythonNetStubGenerator.Tool, if it doesn't exist.
     """
     eprint('Preparing PythonNetStubGenerator.Tool...')
 
-    tool_path = get_python_net_stub_generator_path()
-    if tool_path.exists():
+    if is_tool_version_correct():
         eprint('--- PythonNetStubGenerator.Tool is already built.')
         return
 
     eprint('--- Cleaning old tools...')
-    (TOOLS_DIR / f'{PYTHONNET_STUB_GENERATOR_BASENAME}.zip').unlink(missing_ok=True)
-    rmtree_if_exists(str(TOOLS_DIR / PYTHONNET_STUB_GENERATOR_BASENAME))
     rmtree_if_exists(str(TOOLS_DIR / 'bin'))
+    for f in TOOLS_DIR.glob(PYTHONNET_STUB_GENERATOR_BASENAME_PREFIX + '*'):
+        if f.is_dir():
+            rmtree_if_exists(str(f))
+        else:
+            f.unlink()
 
     eprint('--- Downloading PythonNetStubGenerator.Tool...')
     TOOLS_DIR.mkdir(exist_ok=True)
-    with urllib.request.urlopen(TOOL_SRC_DOWNLOAD_LINK) as tool_response:
+    with urllib.request.urlopen(PYTHONNET_STUB_GENERATOR_SRC_LINK) as tool_response:
         with open(str(TOOLS_DIR / f'{PYTHONNET_STUB_GENERATOR_BASENAME}.zip'), 'xb') as tool_file:
             tool_file.write(tool_response.read())
 
@@ -210,7 +233,7 @@ def run() -> int:
         eprint('itextpy package not found. You should run '
                'init_itextpy_package.py before running this script.')
         return 1
-    if are_stubs_up_to_date():
+    if are_stubs_up_to_date() and is_tool_version_correct():
         eprint('Stubs are already up-to-date. Doing nothing.')
         return 1
     dotnet_path = require_dotnet()
