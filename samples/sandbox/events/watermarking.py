@@ -12,7 +12,7 @@ from iText.Kernel.Colors import ColorConstants
 from iText.Kernel.Font import PdfFontFactory
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
 from iText.Kernel.Pdf.Canvas import PdfCanvas
-from iText.Kernel.Pdf.Event import AbstractPdfDocumentEventHandler, PdfDocumentEvent
+from iText.Kernel.Pdf.Event import PdfDocumentEvent, PyAbstractPdfDocumentEventHandler
 from iText.Layout import Canvas, Document
 from iText.Layout.Element import Cell, Paragraph, Table
 from iText.Layout.Properties import TextAlignment, UnitValue, VerticalAlignment
@@ -30,12 +30,12 @@ def itext_closing(obj):
         obj.Close()
 
 
-class WatermarkingEventHandler(AbstractPdfDocumentEventHandler):
+class WatermarkingEventHandler(PyAbstractPdfDocumentEventHandler):
     # This is the namespace for this object in .NET
     # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.Events"
 
-    def OnAcceptedEvent(self, event: PdfDocumentEvent) -> None:
+    def _OnAcceptedEvent(self, event: PdfDocumentEvent) -> None:
         pdf_doc = event.GetDocument()
         page = event.GetPage()
         font = None

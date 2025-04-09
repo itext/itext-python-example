@@ -9,7 +9,7 @@ from iText.IO.Font.Constants import StandardFonts
 from iText.IO.Exceptions import IOException
 from iText.Kernel.Font import PdfFontFactory
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
-from iText.Kernel.Pdf.Event import AbstractPdfDocumentEventHandler, PdfDocumentEvent
+from iText.Kernel.Pdf.Event import PdfDocumentEvent, PyAbstractPdfDocumentEventHandler
 from iText.Layout import Canvas, Document
 from iText.Layout.Element import AreaBreak, Cell, Paragraph
 from iText.Layout.Properties import TextAlignment
@@ -25,7 +25,7 @@ def itext_closing(obj):
         obj.Close()
 
 
-class TextFooterEventHandler(AbstractPdfDocumentEventHandler):
+class TextFooterEventHandler(PyAbstractPdfDocumentEventHandler):
     # This is the namespace for this object in .NET
     # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.Events"
@@ -34,7 +34,7 @@ class TextFooterEventHandler(AbstractPdfDocumentEventHandler):
         super().__init__()
         self.doc = doc
 
-    def OnAcceptedEvent(self, event: PdfDocumentEvent) -> None:
+    def _OnAcceptedEvent(self, event: PdfDocumentEvent) -> None:
         page_size = event.GetPage().GetPageSize()
         font = None
         try:

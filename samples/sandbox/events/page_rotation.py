@@ -5,7 +5,7 @@ import contextlib
 from pathlib import Path
 
 from iText.Kernel.Pdf import PdfName, PdfNumber, PdfWriter, PdfDocument
-from iText.Kernel.Pdf.Event import AbstractPdfDocumentEventHandler, PdfDocumentEvent
+from iText.Kernel.Pdf.Event import PdfDocumentEvent, PyAbstractPdfDocumentEventHandler
 from iText.Layout import Document
 from iText.Layout.Element import AreaBreak, Cell, Paragraph
 
@@ -28,7 +28,7 @@ SEASCAPE = PdfNumber(270)
 HELLO_WORLD = Paragraph("Hello World!")
 
 
-class PageRotationEventHandler(AbstractPdfDocumentEventHandler):
+class PageRotationEventHandler(PyAbstractPdfDocumentEventHandler):
     # This is the namespace for this object in .NET
     # Without this, it won't work with Python.NET
     __namespace__ = "Sandbox.Events"
@@ -37,7 +37,7 @@ class PageRotationEventHandler(AbstractPdfDocumentEventHandler):
         super().__init__()
         self.rotation = PORTRAIT
 
-    def OnAcceptedEvent(self, event: PdfDocumentEvent) -> None:
+    def _OnAcceptedEvent(self, event: PdfDocumentEvent) -> None:
         event.GetPage().Put(PdfName.Rotate, self.rotation)
 
 

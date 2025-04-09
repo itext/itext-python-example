@@ -4,13 +4,16 @@ import shutil
 import sys
 
 from collections import defaultdict
-from glob import glob
 from os.path import getmtime
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
+# Name of the .NET stub project
+STUB_PROJ_NAME = 'csharp-dependency-stub'
 # Path to the .NET stub project directory
-STUB_DIR = SCRIPT_DIR / 'csharp-dependency-stub'
+STUB_PROJ_DIR = SCRIPT_DIR / STUB_PROJ_NAME
+# Path to the Python compat .NET library project directory
+COMPAT_PROJ_DIR = SCRIPT_DIR / 'itext.python.compat'
 # Path to the output "itextpy" package directory
 PACKAGE_DIR = SCRIPT_DIR / 'itextpy'
 # Path to the root directory for "itextpy" binaries
@@ -62,7 +65,7 @@ def get_publish_dir(runtime: str) -> Path:
     Returns path to the publish directory of the .NET stub project for the
     specified runtime.
     """
-    return STUB_DIR / 'bin' / CONFIGURATION / FRAMEWORK / runtime / 'publish'
+    return STUB_PROJ_DIR / 'bin' / CONFIGURATION / FRAMEWORK / runtime / 'publish'
 
 
 def are_relevant_binaries_published() -> bool:
@@ -73,7 +76,12 @@ def are_relevant_binaries_published() -> bool:
     published_file = (ANY_PUBLISH_DIR / '.published')
     if not published_file.exists():
         return False
-    return getmtime(STUB_DIR / '_csharp-dependency-stub.csproj') < getmtime(published_file)
+    for proj_dir in (STUB_PROJ_DIR, COMPAT_PROJ_DIR):
+        for ext in ('cs', 'csproj'):
+            for f in proj_dir.glob(f'**/*.{ext}'):
+                if getmtime(f) > getmtime(published_file):
+                    return False
+    return True
 
 
 def require_dotnet() -> str | None:
@@ -100,7 +108,7 @@ def clean_stub() -> None:
     for subdir in ('obj', 'bin'):
         eprint(f'--- Cleaning {subdir}...')
         try:
-            shutil.rmtree(str(STUB_DIR / subdir))
+            shutil.rmtree(str(STUB_PROJ_DIR / subdir))
         except FileNotFoundError:
             pass
     eprint('--- Stub project cleaned.')
@@ -119,7 +127,7 @@ def publish_stub(dotnet_path: str) -> None:
             subprocess.run(
                 args=(
                     dotnet_path, 'publish',
-                    str(STUB_DIR),
+                    str(STUB_PROJ_DIR),
                     '--nologo',
                     '--no-self-contained',
                     '--configuration', CONFIGURATION,
@@ -149,8 +157,8 @@ def index_stub_binaries() -> defaultdict[str, set[str]]:
     for os, architectures in RUNTIMES.items():
         for arch in architectures:
             runtime = to_runtime(os, arch)
-            for dll in glob('[!_]*.dll', root_dir=get_publish_dir(runtime)):
-                binaries[runtime].add(dll)
+            for dll in get_publish_dir(runtime).glob('[!_]*.dll'):
+                binaries[runtime].add(str(dll.name))
 
     for os in RUNTIMES:
         eprint(f'--- Deduplicating libraries within {os}...')
@@ -287,15 +295,15 @@ def index_package_binaries() -> defaultdict[str, set[str]]:
     eprint('Indexing package binaries...')
 
     binaries = defaultdict(set)
-    for dll in glob('[!_]*.dll', root_dir=ANY_PUBLISH_DIR):
-        binaries['any'].add(dll)
+    for dll in ANY_PUBLISH_DIR.glob('[!_]*.dll'):
+        binaries['any'].add(str(dll.name))
     for os, architectures in RUNTIMES.items():
-        for dll in glob('[!_]*.dll', root_dir=ANY_PUBLISH_DIR / os):
-            binaries[os].add(dll)
+        for dll in (ANY_PUBLISH_DIR / os).glob('[!_]*.dll'):
+            binaries[os].add(str(dll.name))
         for arch in architectures:
             runtime = to_runtime(os, arch)
-            for dll in glob('[!_]*.dll', root_dir=ANY_PUBLISH_DIR / os / arch):
-                binaries[runtime].add(dll)
+            for dll in (ANY_PUBLISH_DIR / os / arch).glob('[!_]*.dll'):
+                binaries[runtime].add(str(dll.name))
 
     eprint('--- Indexing finished.')
     return binaries
