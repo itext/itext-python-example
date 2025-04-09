@@ -11,9 +11,9 @@ SCRIPT_DIR = Path(__file__).parent.absolute()
 # Name of the .NET stub project
 STUB_PROJ_NAME = 'csharp-dependency-stub'
 # Path to the .NET stub project directory
-STUB_PROJ_DIR = SCRIPT_DIR / STUB_PROJ_NAME
+STUB_PROJ_DIR = SCRIPT_DIR / 'csharp' / STUB_PROJ_NAME
 # Path to the Python compat .NET library project directory
-COMPAT_PROJ_DIR = SCRIPT_DIR / 'itext.python.compat'
+COMPAT_PROJ_DIR = SCRIPT_DIR / 'csharp' / 'itext.python.compat'
 # Path to the output "itextpy" package directory
 PACKAGE_DIR = SCRIPT_DIR / 'itextpy'
 # Path to the root directory for "itextpy" binaries
