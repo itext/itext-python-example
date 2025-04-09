@@ -2,7 +2,6 @@
 
 This aims to create a pip package for iText 9 distribution
 
-
 # Build 
 
 .NET Core is required for build the package and `dotnet` tool should be
@@ -61,9 +60,13 @@ document.Close()
   [pythonnet-stub-generator](https://github.com/MHDante/pythonnet-stub-generator).
   Ideally we would want to have docs transferred as well and be able to patch
   the tool output manually, if needed.
+* As of Python.NET 3.0.5 you cannot override protected methods within Python.
+  To overcome this limitation, we include a small `itext.python.compat`
+  library. It includes subclasses, which wraps protected methods into
+  overridable public ones.
 * Dependencies are taken from NuGet and dependency resolution is handled by the
   .NET Core SDK. To control the library version, modify package versions within
-  `csharp-dependency-stub`.
+  `itext.python.compat`.
 * Only the following packages are included:
   * `itext`
   * `itext.bouncy-castle-adapter`
@@ -72,5 +75,5 @@ document.Close()
   it should get called automatically before the build.
 * Current 9.1.0 build contains a bug, which prevent running iText with .NET
   Core under Python.NET. For now we have a workaround here with a binary patch.
-  Patch is done with the `patch_itext_io.py` script. So the `itext.io.dll`
-  binary is not the same, as the one from NuGet. 
+  Patch is done with the `patch_itext_binaries.py` script. So the 
+  `itext.io.dll` binary is not the same, as the one from NuGet.
