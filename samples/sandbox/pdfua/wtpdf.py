@@ -1,12 +1,10 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import clr_try_cast, disposing
+
 from pathlib import Path
 
-import clr
-
-from System import Convert
 from System.IO import FileAccess, FileMode, FileStream
 from iText.Html2pdf import ConverterProperties, HtmlConverter
 from iText.Html2pdf.Attach import ITagWorker, ProcessorContext
@@ -26,30 +24,6 @@ WTPDF_RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources" / "wtpdf"
 HTML_PATH = str(WTPDF_RESOURCES_DIR / "article.html")
 ICC_PATH = str(WTPDF_RESOURCES_DIR / "sRGB Color Space Profile.icm")
 XMP_PATH = str(WTPDF_RESOURCES_DIR / "simplePdfUA2.xmp")
-
-
-# Inspired from https://github.com/pythonnet/pythonnet/issues/2213#issuecomment-1671252320
-def try_cast(typ, obj):
-    clr_type = clr.GetClrType(typ)
-    if not clr_type.IsInstanceOfType(obj):
-        return None
-    return Convert.ChangeType(obj, clr_type)
-
-
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
-@contextlib.contextmanager
-def disposable(obj):
-    try:
-        yield obj
-    finally:
-        obj.Dispose()
 
 
 class CustomTagWorkerFactory(DefaultTagWorkerFactory):
@@ -78,22 +52,22 @@ class CustomHTagWorker(HTagWorker):
         #        It just call this method again, causing infinite recursion.
         element_result = HTagWorker.GetElementResult(self)
         # Duck typing does not really work for .NET types...
-        result = try_cast(Div, element_result)
+        result = clr_try_cast(element_result, Div)
         if result is not None:
             for child in result.GetChildren():
-                paragraph = try_cast(Paragraph, child)
+                paragraph = clr_try_cast(child, Paragraph)
                 if paragraph is not None:
                     paragraph.SetNeutralRole()
         return element_result
 
 
 def manipulate_pdf(dest):
-    icc_stream = FileStream(ICC_PATH, FileMode.Open, FileAccess.Read)
-    intent = PdfOutputIntent("Custom", "", None, "sRGB IEC61966-2.1", icc_stream)
+    with disposing(FileStream(ICC_PATH, FileMode.Open, FileAccess.Read)) as icc_stream:
+        intent = PdfOutputIntent("Custom", "", None, "sRGB IEC61966-2.1", icc_stream)
     writer_props = WriterProperties().SetPdfVersion(PdfVersion.PDF_2_0)
-    with itext_closing(PdfADocument(PdfWriter(dest, writer_props), PdfAConformance.PDF_A_4, intent)) as pdf_doc:
+    with disposing(PdfADocument(PdfWriter(dest, writer_props), PdfAConformance.PDF_A_4, intent)) as pdf_doc:
         # Setup the general requirements for a wtpdf document
-        with disposable(FileStream(XMP_PATH, FileMode.Open, FileAccess.Read)) as xmp_stream:
+        with disposing(FileStream(XMP_PATH, FileMode.Open, FileAccess.Read)) as xmp_stream:
             xmp_meta = XMPMetaFactory.Parse(xmp_stream)
         pdf_doc.SetXmpMetadata(xmp_meta)
         pdf_doc.SetTagged()
@@ -117,7 +91,7 @@ def manipulate_pdf(dest):
             .SetFontProvider(font_provider)
         )
 
-        with disposable(FileStream(HTML_PATH, FileMode.Open)) as html_stream:
+        with disposing(FileStream(HTML_PATH, FileMode.Open)) as html_stream:
             HtmlConverter.ConvertToPdf(html_stream, pdf_doc, converter_properties)
 
 

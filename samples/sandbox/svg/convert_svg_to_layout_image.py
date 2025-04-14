@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from System.IO import FileAccess, FileMode, FileStream
@@ -15,27 +16,17 @@ SCRIPT_DIR = Path(__file__).parent.absolute()
 SVG_RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources" / "svg"
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(svg_source, pdf_dest):
-    with (itext_closing(PdfDocument(PdfWriter(pdf_dest))) as pdf_doc,
-          itext_closing(Document(pdf_doc)) as doc):
+    with (disposing(PdfDocument(PdfWriter(pdf_dest))) as pdf_doc,
+          disposing(Document(pdf_doc)) as doc):
         # Create new page
         pdf_doc.AddNewPage(PageSize.A4)
 
         doc.Add(Paragraph("This is some text added before the SVG image."))
 
-        # SVG image
-        svg_path = FileStream(svg_source, FileMode.Open, FileAccess.Read)
-
-        # Convert to image
-        image = SvgConverter.ConvertToImage(svg_path, pdf_doc)
+        with disposing(FileStream(svg_source, FileMode.Open, FileAccess.Read)) as svg_path:
+            # Convert to image
+            image = SvgConverter.ConvertToImage(svg_path, pdf_doc)
 
         # Set scale
         image.ScaleToFit(PageSize.A4.GetWidth() / 2, PageSize.A4.GetHeight() / 2)

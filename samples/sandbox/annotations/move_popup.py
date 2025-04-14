@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from iText.Kernel.Pdf import PdfArray, PdfName, PdfReader, PdfWriter, PdfDocument
@@ -11,16 +12,8 @@ RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 SRC = str(RESOURCES_DIR / "pdfs" / "hello_sticky_note.pdf")
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(dest):
-    with itext_closing(PdfDocument(PdfReader(SRC), PdfWriter(dest))) as pdf_doc:
+    with disposing(PdfDocument(PdfReader(SRC), PdfWriter(dest))) as pdf_doc:
         page = pdf_doc.GetFirstPage().GetPdfObject()
         annots = page.GetAsArray(PdfName.Annots)
 

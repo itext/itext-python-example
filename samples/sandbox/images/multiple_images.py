@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from iText.IO.Image import ImageDataFactory
@@ -19,19 +20,11 @@ IMAGES = (
 )
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(dest):
     image = Image(ImageDataFactory.Create(IMAGES[0]))
     page_size = PageSize(image.GetImageWidth(), image.GetImageHeight())
-    with (itext_closing(PdfDocument(PdfWriter(dest))) as pdf_doc,
-          itext_closing(Document(pdf_doc, page_size)) as doc):
+    with (disposing(PdfDocument(PdfWriter(dest))) as pdf_doc,
+          disposing(Document(pdf_doc, page_size)) as doc):
         for i, image_path in enumerate(IMAGES):
             image = Image(ImageDataFactory.Create(image_path))
             pdf_doc.AddNewPage(PageSize(image.GetImageWidth(), image.GetImageHeight()))

@@ -1,7 +1,7 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
 
 from iText.Forms.Form.Element import Button, InputField, Radio, TextArea
 from iText.Kernel.Colors import ColorConstants
@@ -11,16 +11,8 @@ from iText.Layout.Borders import SolidBorder
 from iText.Layout.Element import Cell, Paragraph, Table
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(dest):
-    with itext_closing(Document(PdfDocument(PdfWriter(dest)))) as document:
+    with disposing(Document(PdfDocument(PdfWriter(dest)))) as document:
         input_field = InputField("input field")
         input_field.SetValue("John")
         input_field.SetInteractive(True)

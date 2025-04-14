@@ -1,6 +1,8 @@
 import itextpy
 itextpy.load()
 
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from System.IO import FileAccess, FileMode, FileStream
@@ -19,11 +21,9 @@ def manipulate_pdf(html_source, pdf_dest, resource_loc):
     # Set media device type to correctly parsing html with media handling
     converter_properties.SetMediaDeviceDescription(MediaDeviceDescription(MediaType.PRINT))
 
-    HtmlConverter.ConvertToPdf(
-        FileStream(html_source, FileMode.Open),
-        FileStream(pdf_dest, FileMode.Create, FileAccess.Write),
-        converter_properties
-    )
+    with (disposing(FileStream(html_source, FileMode.Open)) as html_stream,
+          disposing(FileStream(pdf_dest, FileMode.Create, FileAccess.Write)) as pdf_stream):
+        HtmlConverter.ConvertToPdf(html_stream, pdf_stream, converter_properties)
 
 
 if __name__ == "__main__":

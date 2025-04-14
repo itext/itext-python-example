@@ -1,6 +1,8 @@
 import itextpy
 itextpy.load()
 
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from System.IO import FileAccess, FileMode, FileShare, FileStream
@@ -24,11 +26,9 @@ def manipulate_pdf(html_source, pdf_dest, resource_loc):
     css_applier_factory = ColorBlindnessCssApplierFactory(ColorBlindnessTransforms.DEUTERANOMALY)
     converter_properties.SetCssApplierFactory(css_applier_factory)
 
-    HtmlConverter.ConvertToPdf(
-        FileStream(html_source, FileMode.Open, FileAccess.Read, FileShare.Read),
-        FileStream(pdf_dest, FileMode.Create, FileAccess.Write),
-        converter_properties
-    )
+    with (disposing(FileStream(html_source, FileMode.Open, FileAccess.Read, FileShare.Read)) as html_stream,
+          disposing(FileStream(pdf_dest, FileMode.Create, FileAccess.Write)) as pdf_stream):
+        HtmlConverter.ConvertToPdf(html_stream, pdf_stream, converter_properties)
 
 
 if __name__ == "__main__":

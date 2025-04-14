@@ -337,7 +337,7 @@ def generate_init_file(binaries: defaultdict[str, set[str]]) -> bool:
     lines = [
         "# !!! THIS FILE IS AUTO-GENERATED, DO NOT EDIT !!!",
         "import pathlib as _pathlib",
-        "from . import _util",
+        "from . import _init_util",
         "",
         "_BINARIES = _pathlib.Path(__file__).parent / 'binaries'",
         "",
@@ -349,8 +349,8 @@ def generate_init_file(binaries: defaultdict[str, set[str]]) -> bool:
         "    This function imports clr, so if you wish to customise your .NET runtime",
         "    configuration, it should be done before calling this function.",
         '    """',
-        "    system_name = _util.system()",
-        "    _util.set_default_runtime(system_name)",
+        "    system_name = _init_util.system()",
+        "    _init_util.set_default_runtime(system_name)",
         "    import clr",
     ]
     for dll in sorted(binaries['any']):

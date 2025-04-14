@@ -1,7 +1,7 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
 
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
 from iText.Layout import Document
@@ -9,16 +9,8 @@ from iText.Layout.Element import Cell, Paragraph, Table
 from iText.Layout.Properties import UnitValue
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(dest):
-    with itext_closing(Document(PdfDocument(PdfWriter(dest)))) as doc:
+    with disposing(Document(PdfDocument(PdfWriter(dest)))) as doc:
         doc.Add(Paragraph("With 3 columns:"))
         table = Table(UnitValue.CreatePercentArray([10, 10, 80]))
         table.SetMarginTop(5)

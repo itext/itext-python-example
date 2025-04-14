@@ -1,7 +1,6 @@
 import itextpy
 itextpy.load()
 
-import contextlib
 from pathlib import Path
 
 from System.IO import FileInfo
@@ -9,14 +8,6 @@ from iText.Svg.Converter import SvgConverter
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 SVG_RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources" / "svg"
-
-
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
 
 
 def manipulate_pdf(svg_source, pdf_dest):

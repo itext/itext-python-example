@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from iText.Forms.Form.Element import InputField
@@ -22,14 +23,6 @@ RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 FONT_PATH = str(RESOURCES_DIR / "font" / "FreeSans.ttf")
 DOG_PATH = str(RESOURCES_DIR / "img" / "dog.bmp")
 FOX_PATH = str(RESOURCES_DIR / "img" / "fox.bmp")
-
-
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
 
 
 def add_form_fields(document: Document) -> None:
@@ -119,8 +112,8 @@ def add_tables(document: Document) -> None:
 
 def manipulate_pdf(dest):
     ua_config = PdfUAConfig(PdfUAConformance.PDF_UA_1, "Some title", "en-US")
-    with (itext_closing(PdfUADocument(PdfWriter(dest), ua_config)) as pdf_doc,
-          itext_closing(Document(pdf_doc, PageSize.A4.Rotate())) as document):
+    with (disposing(PdfUADocument(PdfWriter(dest), ua_config)) as pdf_doc,
+          disposing(Document(pdf_doc, PageSize.A4.Rotate())) as document):
         # PDF UA requires font to be embedded, this is the way we want to do it
         font = PdfFontFactory.CreateFont(
             FONT_PATH,

@@ -1,7 +1,7 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
 
 from iText.Kernel.Geom import PageSize
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
@@ -9,17 +9,9 @@ from iText.Layout import Document
 from iText.Layout.Element import AreaBreak, Paragraph
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(dest):
     page_size = PageSize(200, 200)
-    with itext_closing(Document(PdfDocument(PdfWriter(dest)), page_size)) as doc:
+    with disposing(Document(PdfDocument(PdfWriter(dest)), page_size)) as doc:
         margins_text = ", ".join(map(str, (doc.GetTopMargin(),
                                            doc.GetRightMargin(),
                                            doc.GetBottomMargin(),

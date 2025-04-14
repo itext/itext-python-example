@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 from sys import stderr
 
@@ -15,14 +16,6 @@ from iText.Layout.Element import AreaBreak, Cell, Paragraph
 from iText.Layout.Properties import TextAlignment
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
-
-
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
 
 
 class TextFooterEventHandler(PyAbstractPdfDocumentEventHandler):
@@ -48,7 +41,7 @@ class TextFooterEventHandler(PyAbstractPdfDocumentEventHandler):
                    + (page_size.GetRight() - self.doc.GetRightMargin())) / 2
         header_y = page_size.GetTop() - self.doc.GetTopMargin() + 10
         footer_y = self.doc.GetBottomMargin()
-        with itext_closing(Canvas(event.GetPage(), page_size)) as canvas:
+        with disposing(Canvas(event.GetPage(), page_size)) as canvas:
             (canvas
              # If the exception has been thrown, the font variable is not initialized.
              # Therefore, null will be set and iText will use the default font - Helvetica
@@ -68,8 +61,8 @@ def handle_csv_line(table, line, font, is_header):
 
 
 def manipulate_pdf(dest):
-    with (itext_closing(PdfDocument(PdfWriter(dest))) as pdf_doc,
-          itext_closing(Document(pdf_doc)) as doc):
+    with (disposing(PdfDocument(PdfWriter(dest))) as pdf_doc,
+          disposing(Document(pdf_doc)) as doc):
         text_footer_event_handler = TextFooterEventHandler(doc)
         pdf_doc.AddEventHandler(PdfDocumentEvent.END_PAGE, text_footer_event_handler)
 

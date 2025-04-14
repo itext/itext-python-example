@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 import csv
 from pathlib import Path
 
@@ -24,14 +25,6 @@ FONT_REGULAR = str(RESOURCES_DIR / "font" / "OpenSans-Regular.ttf")
 FONT_BOLD = str(RESOURCES_DIR / "font" / "OpenSans-Bold.ttf")
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def handle_csv_line(table, line, font, font_size, is_header):
     for token in line:
         cell = Cell().Add(Paragraph(token).SetFont(font).SetFontSize(font_size))
@@ -45,10 +38,10 @@ def manipulate_pdf(dest):
     font = PdfFontFactory.CreateFont(FONT_REGULAR, PdfEncodings.IDENTITY_H)
     bold = PdfFontFactory.CreateFont(FONT_BOLD, PdfEncodings.IDENTITY_H)
 
-    icc_stream = FileStream(ICC_PATH, FileMode.Open, FileAccess.Read)
-    intent = PdfOutputIntent("Custom", "", None, "sRGB IEC61966-2.1", icc_stream)
-    with (itext_closing(PdfADocument(PdfWriter(dest), PdfAConformance.PDF_A_3B, intent)) as pdf_doc,
-          itext_closing(Document(pdf_doc, PageSize.A4.Rotate())) as document):
+    with disposing(FileStream(ICC_PATH, FileMode.Open, FileAccess.Read)) as icc_stream:
+        intent = PdfOutputIntent("Custom", "", None, "sRGB IEC61966-2.1", icc_stream)
+    with (disposing(PdfADocument(PdfWriter(dest), PdfAConformance.PDF_A_3B, intent)) as pdf_doc,
+          disposing(Document(pdf_doc, PageSize.A4.Rotate())) as document):
         parameters = PdfDictionary()
         parameters.Put(PdfName.ModDate, PdfDate().GetPdfObject())
 

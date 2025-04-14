@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from System.IO import FileAccess, FileMode, FileStream
@@ -20,19 +21,11 @@ FONT_PATH = str(RESOURCES_DIR / "font" / "OpenSans-Regular.ttf")
 IMG_PATH = str(RESOURCES_DIR / "img" / "hero.jpg")
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(dest):
-    icc_stream = FileStream(ICC_PATH, FileMode.Open, FileAccess.Read)
-    intent = PdfOutputIntent("Custom", "", None, "sRGB IEC61966-2.1", icc_stream)
-    with (itext_closing(PdfADocument(PdfWriter(dest), PdfAConformance.PDF_A_4, intent)) as pdf_doc,
-          itext_closing(Document(pdf_doc)) as document):
+    with disposing(FileStream(ICC_PATH, FileMode.Open, FileAccess.Read)) as icc_stream:
+        intent = PdfOutputIntent("Custom", "", None, "sRGB IEC61966-2.1", icc_stream)
+    with (disposing(PdfADocument(PdfWriter(dest), PdfAConformance.PDF_A_4, intent)) as pdf_doc,
+          disposing(Document(pdf_doc)) as document):
         logo_image = Image(ImageDataFactory.Create(IMG_PATH))
         document.Add(logo_image)
 

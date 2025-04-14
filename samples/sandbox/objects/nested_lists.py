@@ -1,23 +1,15 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
 
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
 from iText.Layout import Document
 from iText.Layout.Element import List, ListItem, Paragraph
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(dest):
-    with itext_closing(Document(PdfDocument(PdfWriter(dest)))) as document:
+    with disposing(Document(PdfDocument(PdfWriter(dest)))) as document:
         top_level = List()
         top_level_item = ListItem()
         top_level_item.Add(Paragraph().Add("Item 1"))

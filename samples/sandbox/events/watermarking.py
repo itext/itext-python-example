@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 import csv
 from pathlib import Path
 from sys import stderr
@@ -22,14 +23,6 @@ RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 DATA_CSV_PATH = str(RESOURCES_DIR / "data" / "united_states.csv")
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 class WatermarkingEventHandler(PyAbstractPdfDocumentEventHandler):
     # This is the namespace for this object in .NET
     # Without this, it won't work with Python.NET
@@ -46,7 +39,7 @@ class WatermarkingEventHandler(PyAbstractPdfDocumentEventHandler):
             # because helvetica is one of standard fonts
             print(e.Message, file=stderr)
         pdf_canvas = PdfCanvas(page.NewContentStreamBefore(), page.GetResources(), pdf_doc)
-        with itext_closing(Canvas(pdf_canvas, page.GetPageSize())) as canvas:
+        with disposing(Canvas(pdf_canvas, page.GetPageSize())) as canvas:
             (canvas
              .SetFontColor(ColorConstants.LIGHT_GRAY)
              .SetFontSize(60)
@@ -82,8 +75,8 @@ def manipulate_pdf(dest):
         for line in csv_reader:
             handle_csv_line(table, line, font, False)
 
-    with (itext_closing(PdfDocument(PdfWriter(dest))) as pdf_doc,
-          itext_closing(Document(pdf_doc)) as doc):
+    with (disposing(PdfDocument(PdfWriter(dest))) as pdf_doc,
+          disposing(Document(pdf_doc)) as doc):
         watermark_handler = WatermarkingEventHandler()
         pdf_doc.AddEventHandler(PdfDocumentEvent.END_PAGE, watermark_handler)
         doc.Add(table)

@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from iText.Kernel.Pdf import PdfName, PdfNumber, PdfWriter, PdfDocument
@@ -10,15 +11,6 @@ from iText.Layout import Document
 from iText.Layout.Element import AreaBreak, Cell, Paragraph
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
-
-
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
 
 PORTRAIT = PdfNumber(0)
 LANDSCAPE = PdfNumber(90)
@@ -51,8 +43,8 @@ def handle_csv_line(table, line, font, is_header):
 
 
 def manipulate_pdf(dest):
-    with (itext_closing(PdfDocument(PdfWriter(dest))) as pdf_doc,
-          itext_closing(Document(pdf_doc)) as doc):
+    with (disposing(PdfDocument(PdfWriter(dest))) as pdf_doc,
+          disposing(Document(pdf_doc)) as doc):
         page_rotation_handler = PageRotationEventHandler()
         pdf_doc.AddEventHandler(PdfDocumentEvent.START_PAGE, page_rotation_handler)
 

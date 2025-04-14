@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from iText.Kernel.Pdf import PdfReader, PdfWriter, PdfDocument
@@ -13,19 +14,11 @@ COVER_PATH = str(RESOURCES_DIR / "pdfs" / "hero.pdf")
 RESOURCE_PATH = str(RESOURCES_DIR / "pdfs" / "pages.pdf")
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(dest):
-    with (itext_closing(PdfDocument(PdfWriter(dest))) as pdf_doc,
-          itext_closing(PdfDocument(PdfReader(COVER_PATH))) as cover,
-          itext_closing(PdfDocument(PdfReader(RESOURCE_PATH))) as resource,
-          itext_closing(PdfMerger(pdf_doc)) as merger):
+    with (disposing(PdfDocument(PdfReader(COVER_PATH))) as cover,
+          disposing(PdfDocument(PdfReader(RESOURCE_PATH))) as resource,
+          disposing(PdfDocument(PdfWriter(dest))) as pdf_doc):
+        merger = PdfMerger(pdf_doc)
         merger.Merge(cover, 1, 1)
         merger.Merge(resource, 1, resource.GetNumberOfPages())
 

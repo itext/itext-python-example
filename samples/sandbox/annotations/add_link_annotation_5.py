@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from iText.Kernel.Pdf.Action import PdfAction
@@ -17,17 +18,9 @@ RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
 SRC = str(RESOURCES_DIR / "pdfs" / "primes.pdf")
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(dest):
-    with (itext_closing(PdfDocument(PdfReader(SRC), PdfWriter(dest))) as pdf_doc,
-          itext_closing(Document(pdf_doc)) as doc):
+    with (disposing(PdfDocument(PdfReader(SRC), PdfWriter(dest))) as pdf_doc,
+          disposing(Document(pdf_doc)) as doc):
         # Make the link destination page fit to the display
         destination = PdfExplicitDestination.CreateFit(pdf_doc.GetPage(3))
         link = Link(

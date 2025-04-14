@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from iText.Kernel.Geom import PageSize
@@ -13,16 +14,8 @@ SCRIPT_DIR = Path(__file__).parent.absolute()
 SVG_RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources" / "svg"
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(pdf_dest):
-    with itext_closing(PdfDocument(PdfWriter(pdf_dest))) as pdf_doc:
+    with disposing(PdfDocument(PdfWriter(pdf_dest))) as pdf_doc:
         # Create new page
         pdf_doc.AddNewPage(PageSize.A4)
 

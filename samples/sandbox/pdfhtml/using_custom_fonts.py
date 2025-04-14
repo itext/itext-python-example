@@ -1,7 +1,8 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
+
 from pathlib import Path
 
 from System.IO import FileMode, FileStream
@@ -17,16 +18,8 @@ FONT_1_PATH = str(RESOURCES_DIR / "font" / "New Walt Disney.ttf")
 FONT_2_PATH = str(RESOURCES_DIR / "font" / "Greifswalder Tengwar.ttf")
 
 
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
-
-
 def manipulate_pdf(html_source, pdf_dest):
-    with itext_closing(PdfDocument(PdfWriter(pdf_dest))) as pdf_doc:
+    with disposing(PdfDocument(PdfWriter(pdf_dest))) as pdf_doc:
         # Default provider will register standard fonts and free fonts shipped with iText, but not system fonts
         provider = BasicFontProvider()
 
@@ -47,11 +40,8 @@ def manipulate_pdf(html_source, pdf_dest):
                                 .SetBaseUri(str(SRC_DIR))
                                 .SetFontProvider(provider))
 
-        HtmlConverter.ConvertToPdf(
-            FileStream(html_source, FileMode.Open),
-            pdf_doc,
-            converter_properties,
-        )
+        with disposing(FileStream(html_source, FileMode.Open)) as html_stream:
+            HtmlConverter.ConvertToPdf(html_stream, pdf_doc, converter_properties)
 
 
 if __name__ == "__main__":

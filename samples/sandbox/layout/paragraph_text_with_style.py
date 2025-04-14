@@ -1,7 +1,7 @@
 import itextpy
 itextpy.load()
 
-import contextlib
+from itextpy.util import disposing
 
 from iText.IO.Font.Constants import StandardFonts
 from iText.Kernel.Colors import ColorConstants
@@ -9,14 +9,6 @@ from iText.Kernel.Font import PdfFontFactory
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
 from iText.Layout import Style, Document
 from iText.Layout.Element import Paragraph, Text
-
-
-@contextlib.contextmanager
-def itext_closing(obj):
-    try:
-        yield obj
-    finally:
-        obj.Close()
 
 
 def manipulate_pdf(dest):
@@ -35,7 +27,7 @@ def manipulate_pdf(dest):
                  .Add(Text("code style").AddStyle(style))
                  .Add("."))
 
-    with itext_closing(Document(PdfDocument(PdfWriter(dest)))) as document:
+    with disposing(Document(PdfDocument(PdfWriter(dest)))) as document:
         document.Add(paragraph)
 
 
