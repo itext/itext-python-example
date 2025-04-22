@@ -184,7 +184,7 @@ def generate_stubs() -> None:
     eprint('Generating intermediate stubs...')
     system_str = system()
     if system_str == 'Linux':
-        os_id = 'win'
+        os_id = 'linux'
     elif system_str == 'Darwin':
         os_id = 'osx'
     else:
