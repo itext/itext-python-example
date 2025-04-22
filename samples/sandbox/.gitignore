@@ -1,3 +1,6 @@
 # Sample results
 *.pdf
 *.txt
+
+# Requirements for some of the samples
+!requirements.txt
