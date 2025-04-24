@@ -18,8 +18,8 @@ setup(
         ],
     },
     install_requires=(
-        "pythonnet>=3.0",       # Essential pythonnet dependency
-        "dotnet-stubs==0.0.12", # Typing stubs for .NET
+        "pythonnet>=3.0",               # Essential pythonnet dependency
+        "netstandard-stubs>=2.0,<2.1",  # Typing stubs for .NET
     ),
     entry_points={},
 )
