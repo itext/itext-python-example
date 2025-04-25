@@ -167,6 +167,7 @@ def prepare_tools(dotnet_path: str) -> None:
             dotnet_path, 'publish',
             str(TOOLS_DIR / PYTHONNET_STUB_GENERATOR_BASENAME / 'csharp' / 'PythonNetStubTool'),
             '--nologo',
+            '--use-current-runtime',
             '--configuration', 'Release',
             '--output', str(TOOLS_DIR / 'bin'),
         ),
