@@ -50,6 +50,6 @@ packages = [
     "iText-stubs",
 ]
 exclude = [
-    ".generated",
-    ".published",
+    ".*",
+    "*.bak",
 ]
