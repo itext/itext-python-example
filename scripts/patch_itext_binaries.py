@@ -14,9 +14,9 @@ Patch = namedtuple('Patch', ('name', 'marker', 'replacement'))
 PatchSet = namedtuple('PatchSet', ('binary_path', 'patches'))
 
 
-SCRIPT_DIR = Path(__file__).parent.absolute()
+ROOT_DIR = Path(__file__).parent.parent.absolute()
 # Path to the .NET binaries we want to patch
-ITEXT_BINARIES_DIR = SCRIPT_DIR / 'itextpy' / 'binaries'
+ITEXT_BINARIES_DIR = ROOT_DIR / 'itextpy' / 'binaries'
 # Path to the iText.IO binary
 ITEXT_IO_PATH = ITEXT_BINARIES_DIR / 'itext.io.dll'
 # Path to the iText.Kernel binary

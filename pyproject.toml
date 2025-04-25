@@ -1,0 +1,55 @@
+[project]
+name = "itextpy"
+version = "9.1.0"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "pythonnet>=3.0",               # Essential pythonnet dependency
+    "netstandard-stubs>=2.0,<2.1",  # Typing stubs for .NET
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: C#",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+]
+license = "AGPL-3.0"
+license-files = ["LICENSE"]
+
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.hooks.custom]
+path = "scripts/hatch_build.py"
+
+[tool.hatch.build.targets.sdist]
+ignore-vcs = true
+include = [
+    "/itextpy/binaries/**/*.dll",
+    "/itextpy/binaries/.published",
+    "/itextpy/**/*.py",
+    "/itextpy/.generated",
+    "/iText-stubs/**/*.pyi",
+    "/iText-stubs/.generated",
+    "/scripts/",
+    "/LICENSE",
+    "/README.md",
+    "/pyproject.toml",
+]
+
+[tool.hatch.build.targets.wheel]
+pure_python = false
+ignore-vcs = true
+packages = [
+    "itextpy",
+    "iText-stubs",
+]
+exclude = [
+    ".generated",
+    ".published",
+]

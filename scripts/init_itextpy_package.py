@@ -2,20 +2,21 @@
 import subprocess
 import shutil
 import sys
+import time
 
 from collections import defaultdict
 from os.path import getmtime
 from pathlib import Path
 
-SCRIPT_DIR = Path(__file__).parent.absolute()
+ROOT_DIR = Path(__file__).parent.parent.absolute()
 # Name of the .NET stub project
 STUB_PROJ_NAME = 'csharp-dependency-stub'
 # Path to the .NET stub project directory
-STUB_PROJ_DIR = SCRIPT_DIR / 'csharp' / STUB_PROJ_NAME
+STUB_PROJ_DIR = ROOT_DIR / 'csharp' / STUB_PROJ_NAME
 # Path to the Python compat .NET library project directory
-COMPAT_PROJ_DIR = SCRIPT_DIR / 'csharp' / 'itext.python.compat'
+COMPAT_PROJ_DIR = ROOT_DIR / 'csharp' / 'itext.python.compat'
 # Path to the output "itextpy" package directory
-PACKAGE_DIR = SCRIPT_DIR / 'itextpy'
+PACKAGE_DIR = ROOT_DIR / 'itextpy'
 # Path to the root directory for "itextpy" binaries
 ANY_PUBLISH_DIR = PACKAGE_DIR / 'binaries'
 
@@ -76,10 +77,15 @@ def are_relevant_binaries_published() -> bool:
     published_file = (ANY_PUBLISH_DIR / '.published')
     if not published_file.exists():
         return False
+    try:
+        with open(published_file, 'rt') as published:
+            published_time = int(published.read())
+    except:
+        return False
     for proj_dir in (STUB_PROJ_DIR, COMPAT_PROJ_DIR):
         for ext in ('cs', 'csproj'):
             for f in proj_dir.glob(f'**/*.{ext}'):
-                if getmtime(f) > getmtime(published_file):
+                if int(getmtime(f) * 10**9) >= published_time:
                     return False
     return True
 
@@ -283,7 +289,8 @@ def publish_binaries(binaries: defaultdict[str, set[str]]) -> None:
                     eprint(f'--- Moved {dll}.')
 
     eprint('--- Adding .published success mark file')
-    open(ANY_PUBLISH_DIR / '.published', 'x').close()
+    with open(ANY_PUBLISH_DIR / '.published', 'x') as published:
+        published.write(str(time.time_ns()))
 
     eprint('--- All binaries have been published')
 
@@ -371,18 +378,19 @@ def generate_init_file(binaries: defaultdict[str, set[str]]) -> bool:
             init_py.write('\n')
 
     eprint('--- Adding .generated success mark file')
-    open(PACKAGE_DIR / '.generated', 'x').close()
+    with open(PACKAGE_DIR / '.generated', 'x') as generated:
+        generated.write(str(time.time_ns()))
 
     eprint('--- __init__.py generated.')
     return True
 
 
 def run() -> int:
-    dotnet_path = require_dotnet()
-    if dotnet_path is None:
-        return 1
     clean_package()
     if not are_relevant_binaries_published():
+        dotnet_path = require_dotnet()
+        if dotnet_path is None:
+            return 1
         clean_stub()
         publish_stub(dotnet_path)
         binaries = index_stub_binaries()

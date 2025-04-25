@@ -4,22 +4,22 @@ import platform
 import shutil
 import subprocess
 import sys
+import time
 import urllib.request
 
 from glob import glob
-from os.path import getmtime
 from pathlib import Path
 from zipfile import ZipFile
 
-SCRIPT_DIR = Path(__file__).parent.absolute()
+ROOT_DIR = Path(__file__).parent.parent.absolute()
 # Directory for the .NET tools
-TOOLS_DIR = SCRIPT_DIR / 'tools'
+TOOLS_DIR = ROOT_DIR / 'tools'
 # Directory for the final stubs
-FINAL_STUBS_DIR = SCRIPT_DIR / 'iText-stubs'
+FINAL_STUBS_DIR = ROOT_DIR / 'iText-stubs'
 # Temporary directory to put intermediate stubs in
-TEMP_STUBS_DIR = SCRIPT_DIR / 'stubs'
+TEMP_STUBS_DIR = ROOT_DIR / 'stubs'
 # Path to the output "itextpy" package directory
-ITEXT_PY_PACKAGE_DIR = SCRIPT_DIR / 'itextpy'
+ITEXT_PY_PACKAGE_DIR = ROOT_DIR / 'itextpy'
 # Path to the root directory for "itextpy" binaries
 ITEXT_PY_BINARIES_DIR = ITEXT_PY_PACKAGE_DIR / 'binaries'
 
@@ -82,10 +82,21 @@ def are_stubs_up_to_date() -> bool:
     stubs_generated_file = FINAL_STUBS_DIR / '.generated'
     if not stubs_generated_file.exists():
         return False
+    try:
+        with open(stubs_generated_file, 'rt') as generated:
+            generator_version, time_str = generated.read().split('|', maxsplit=1)
+        stubs_generated_time = int(time_str)
+    except:
+        return False
+    if generator_version != PYTHONNET_STUB_GENERATOR_VERSION:
+        return False
     itext_py_published_file = ITEXT_PY_BINARIES_DIR / '.published'
-    if not itext_py_published_file.exists():
-        raise Exception('itextpy is not present')
-    return getmtime(stubs_generated_file) >= getmtime(itext_py_published_file)
+    try:
+        with open(itext_py_published_file, 'rt') as published:
+            itext_py_published_time = int(published.read())
+    except:
+        raise Exception('itextpy is not valid')
+    return stubs_generated_time > itext_py_published_time
 
 
 def require_dotnet() -> str | None:
@@ -115,7 +126,6 @@ def is_tool_version_correct() -> bool:
 
     version_run = subprocess.run(
         args=(tool_path, '--version'),
-        check=True,
         stdout=subprocess.PIPE,
         text=True
     )
@@ -157,8 +167,6 @@ def prepare_tools(dotnet_path: str) -> None:
             dotnet_path, 'publish',
             str(TOOLS_DIR / PYTHONNET_STUB_GENERATOR_BASENAME / 'csharp' / 'PythonNetStubTool'),
             '--nologo',
-            '--use-current-runtime',
-            '--self-contained',
             '--configuration', 'Release',
             '--output', str(TOOLS_DIR / 'bin'),
         ),
@@ -224,7 +232,10 @@ def publish_stubs() -> None:
     eprint('Publishing stubs...')
     shutil.move(str(TEMP_STUBS_DIR / 'iText'), str(FINAL_STUBS_DIR))
     eprint('--- Adding .generated success mark file')
-    open(FINAL_STUBS_DIR / '.generated', 'x').close()
+    with open(FINAL_STUBS_DIR / '.generated', 'x') as generated:
+        generated.write(PYTHONNET_STUB_GENERATOR_VERSION)
+        generated.write('|')
+        generated.write(str(time.time_ns()))
     eprint('--- Stubs have been published.')
 
 
@@ -233,9 +244,9 @@ def run() -> int:
         eprint('itextpy package not found. You should run '
                'init_itextpy_package.py before running this script.')
         return 1
-    if are_stubs_up_to_date() and is_tool_version_correct():
+    if are_stubs_up_to_date():
         eprint('Stubs are already up-to-date. Doing nothing.')
-        return 1
+        return 0
     dotnet_path = require_dotnet()
     if dotnet_path is None:
         return 1
