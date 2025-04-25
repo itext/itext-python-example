@@ -43,7 +43,6 @@ include = [
 ]
 
 [tool.hatch.build.targets.wheel]
-pure_python = false
 ignore-vcs = true
 packages = [
     "itextpy",
