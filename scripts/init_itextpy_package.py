@@ -11,10 +11,12 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).parent.parent.absolute()
 # Name of the .NET stub project
 STUB_PROJ_NAME = 'csharp-dependency-stub'
+# Path to the root dir with .NET projects
+CSHARP_PROJ_DIR = ROOT_DIR / 'csharp'
 # Path to the .NET stub project directory
-STUB_PROJ_DIR = ROOT_DIR / 'csharp' / STUB_PROJ_NAME
+STUB_PROJ_DIR = CSHARP_PROJ_DIR / STUB_PROJ_NAME
 # Path to the Python compat .NET library project directory
-COMPAT_PROJ_DIR = ROOT_DIR / 'csharp' / 'itext.python.compat'
+COMPAT_PROJ_DIR = CSHARP_PROJ_DIR / 'itext.python.compat'
 # Path to the output "itextpy" package directory
 PACKAGE_DIR = ROOT_DIR / 'itextpy'
 # Path to the root directory for "itextpy" binaries
@@ -82,11 +84,10 @@ def are_relevant_binaries_published() -> bool:
             published_time = int(published.read())
     except:
         return False
-    for proj_dir in (STUB_PROJ_DIR, COMPAT_PROJ_DIR):
-        for ext in ('cs', 'csproj'):
-            for f in proj_dir.glob(f'**/*.{ext}'):
-                if int(getmtime(f) * 10**9) >= published_time:
-                    return False
+    for ext in ('cs', 'csproj', 'props'):
+        for f in CSHARP_PROJ_DIR.glob(f'**/*.{ext}'):
+            if int(getmtime(f) * 10**9) >= published_time:
+                return False
     return True
 
 
@@ -106,18 +107,19 @@ def require_dotnet() -> str | None:
     return dotnet_path
 
 
-def clean_stub() -> None:
+def clean_csharp() -> None:
     """
-    Cleans-up the csharp-dependency-stub .NET project.
+    Cleans-up the .NET projects.
     """
-    eprint('Cleaning stub project...')
-    for subdir in ('obj', 'bin'):
-        eprint(f'--- Cleaning {subdir}...')
-        try:
-            shutil.rmtree(str(STUB_PROJ_DIR / subdir))
-        except FileNotFoundError:
-            pass
-    eprint('--- Stub project cleaned.')
+    eprint('Cleaning .NET projects...')
+    for proj_dir in (STUB_PROJ_DIR, COMPAT_PROJ_DIR):
+        for subdir in ('obj', 'bin'):
+            eprint(f'--- Cleaning {proj_dir.name}/{subdir}...')
+            try:
+                shutil.rmtree(str(proj_dir / subdir))
+            except FileNotFoundError:
+                pass
+    eprint('--- .NET projects cleaned.')
 
 
 def publish_stub(dotnet_path: str) -> None:
@@ -391,11 +393,11 @@ def run() -> int:
         dotnet_path = require_dotnet()
         if dotnet_path is None:
             return 1
-        clean_stub()
+        clean_csharp()
         publish_stub(dotnet_path)
         binaries = index_stub_binaries()
         publish_binaries(binaries)
-        clean_stub()
+        clean_csharp()
     if not generate_init_file(index_package_binaries()):
         eprint('Package generation failed.')
         return 1

@@ -65,7 +65,7 @@ document.Close()
   overridable public ones.
 * Dependencies are taken from NuGet and dependency resolution is handled by the
   .NET Core SDK. To control the library version, modify package versions within
-  `itext.python.compat`.
+  `Directory.Packages.props`.
 * Only the following packages are included:
   * `itext`
   * `itext.bouncy-castle-adapter`
