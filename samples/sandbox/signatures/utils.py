@@ -1,3 +1,6 @@
+import itextpy
+itextpy.load()
+
 from System import DateTime, DateTimeKind
 from System.Collections.Generic import Dictionary
 from System.IO import File

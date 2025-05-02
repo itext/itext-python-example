@@ -1,3 +1,6 @@
+import itextpy
+itextpy.load()
+
 from typing import Self
 
 from utils import TestOcspResponseBuilder
