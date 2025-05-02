@@ -10,18 +10,18 @@
   <ItemGroup>
     <PackageVersion Include="BouncyCastle.Cryptography" Version="2.5.1" />
     <PackageVersion Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.4" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.4" />
+    <!-- <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="9.0.4" /> -->
+    <!-- <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.4" /> -->
     <PackageVersion Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
     <PackageVersion Include="Microsoft.NETCore.Targets" Version="5.0.0" />
     <PackageVersion Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="System.Memory" Version="4.6.3" />
+    <!-- <PackageVersion Include="System.Memory" Version="4.6.3" /> -->
     <!-- This one is important as 4.0.0 crashes on Mono -->
     <PackageVersion Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
     <PackageVersion Include="System.Security.AccessControl" Version="6.0.1" />
     <PackageVersion Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
-    <PackageVersion Include="System.Text.Encoding.CodePages" Version="9.0.4" />
+    <!-- <PackageVersion Include="System.Text.Encoding.CodePages" Version="9.0.4" /> -->
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     <PackageVersion Include="System.Xml.ReaderWriter" Version="4.3.1" />
   </ItemGroup>
