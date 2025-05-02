@@ -85,12 +85,23 @@ def get_pages_as_text(doc: PdfDocument) -> list[str]:
     return [text_extractor.GetTextFromPage(page, strategy) for page in pages]
 
 
+# This function removes a <think>...</think> block at the start of the LLM
+# response, if present
+def strip_think(response_data: str) -> str:
+    if response_data.startswith("<think>"):
+        return response_data.partition('</think>')[2]
+    return response_data
+
+
 # This function parses the ToC LLM response into a tree-like structure.
 def parse_response(response_lines: list[str]) -> TableEntry:
     result = TableEntry()
     for line in response_lines:
         # We expect strings like "1.2.3 Chapter" here
-        index_str, caption = line.strip().split(" ", maxsplit=1)
+        stripped = line.strip()
+        if not stripped:
+            continue
+        index_str, caption = stripped.split(" ", maxsplit=1)
         index_seq = [int(i) for i in index_str.split(".") if i]
         entry_list = result.children
         for index in index_seq[:-1]:
@@ -143,7 +154,7 @@ def generate_toc_data(pages: list[str]) -> TableEntry:
         temperature=0.1,
     )
     response_content = response.choices[0].message.content
-    toc_data = parse_response(response_content.splitlines())
+    toc_data = parse_response(strip_think(response_content).splitlines())
     add_page_data(toc_data, pages)
     return toc_data
 
