@@ -19,19 +19,13 @@ ROOT_DIR = Path(__file__).parent.parent.absolute()
 ITEXT_BINARIES_DIR = ROOT_DIR / 'itextpy' / 'binaries'
 # Path to the iText.IO binary
 ITEXT_IO_PATH = ITEXT_BINARIES_DIR / 'itext.io.dll'
-# Path to the iText.Kernel binary
-ITEXT_KERNEL_PATH = ITEXT_BINARIES_DIR / 'itext.kernel.dll'
-# Path to the iText.Signature binary
-ITEXT_SIGN_PATH = ITEXT_BINARIES_DIR / 'itext.sign.dll'
-# Path to the iText.Html2Pdf binary
-ITEXT_HTML2PDF_PATH = ITEXT_BINARIES_DIR / 'itext.html2pdf.dll'
 
 PATCH_SETS = (
     PatchSet(
         binary_path=ITEXT_IO_PATH,
         patches=[
-            # This patch is fix an exception, which happens, when you are
-            # running under .NET Core.
+            # This patch is here to fix an exception, which happens, when you
+            # are running iText in Python under .NET Core.
             #
             # What the patch does is that it modifies this check:
             # https://github.com/itext/itext-dotnet/blob/74700467506d83c6c5c9031cdb31181072f79ba0/itext/itext.io/itext/io/util/ResourceUtil.cs#L227
@@ -41,11 +35,14 @@ PATCH_SETS = (
             # With this:
             #     return; {
             #
-            # So now unconditionally skips the last if block. Since we don't bundle the
-            # font libraries, it shouldn't have any negative effects. Binary is, also, not
-            # signed, so we can safely do this.
+            # With this change it unconditionally skips the last if block.
+            # Since we don't bundle the font libraries, it shouldn't have any
+            # negative effects. Binary is, also, not signed, so we can safely
+            # do this.
             #
-            # This should not be required in the next iText version.
+            # This should not be required in 9.2.0, as a fix for it has already
+            # been merged:
+            # https://github.com/itext/itext-dotnet/commit/cbe1e782aa40e1fb5267095c225d2c964d09cdd0
             Patch(
                 name="ResourceUtil",
                 marker=bytes([
