@@ -4,7 +4,7 @@ This aims to create a pip package for iText 9 distribution
 
 # Build 
 
-.NET Core is required for build the package and `dotnet` tool should be
+.NET Core is required for building the package and `dotnet` tool should be
 available in `PATH`.
 
 To build the package, just run:
@@ -64,13 +64,13 @@ document.Close()
   library. It includes subclasses, which wraps protected methods into
   overridable public ones.
 * Dependencies are taken from NuGet and dependency resolution is handled by the
-  .NET Core SDK. To control the library version, modify package versions within
+  .NET Core SDK. To control the versions of the dependencies, modify them in
   `Directory.Packages.props`.
 * Only the following packages are included:
   * `itext`
   * `itext.bouncy-castle-adapter`
   * `itext.pdfhtml`
-* Current 9.1.0 build contains a bug, which prevent running iText with .NET
-  Core under Python.NET. For now we have a workaround here with a binary patch.
-  Patch is done with the `scripts/patch_itext_binaries.py` script. So the 
-  `itext.io.dll` binary is not the same, as the one from NuGet.
+* Current 9.1.0 build contains a bug, which prevents running iText with .NET
+  Core under Python.NET. For now, we have a workaround here with a binary 
+  patch. Patching is done with the `scripts/patch_itext_binaries.py` script.
+  So the `itext.io.dll` binary is not the same, as the one from NuGet.
