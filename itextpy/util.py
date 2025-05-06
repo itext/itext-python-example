@@ -1,8 +1,8 @@
 """
 This module contains some utility methods to make interacting with .NET easier.
 """
-from contextlib import AbstractContextManager as _AbstractContextManager
-from typing import Any as _Any, Generic as _Generic, TypeVar as _TypeVar
+from contextlib import contextmanager as _contextmanager
+from typing import Any as _Any, Iterator as _Iterator, TypeVar as _TypeVar
 
 from System import IDisposable as _IDisposable
 
@@ -59,14 +59,10 @@ def clr_cast(obj: object, typ: type[_T]) -> _T:
     return obj
 
 
-class disposing(_AbstractContextManager, _Generic[_DisposableT]):
+@_contextmanager
+def disposing(obj: _DisposableT) -> _Iterator[_DisposableT]:
     """Context to automatically dispose of a .NET object at the end of a block."""
-
-    def __init__(self, obj: _DisposableT):
-        self.obj = obj
-
-    def __enter__(self) -> _DisposableT:
-        return self.obj
-
-    def __exit__(self, *exc_info) -> None:
-        _IDisposable.Dispose(self.obj)
+    try:
+        yield obj
+    finally:
+        _IDisposable.Dispose(obj)
