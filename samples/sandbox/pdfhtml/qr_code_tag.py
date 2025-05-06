@@ -17,7 +17,7 @@ class QRCodeTagWorker(ITagWorker):
     """
     Example of a custom tag worker implementation for pdfHTML.
 
-    The tag worker processes a **>qr** tag using iText Barcode functionality.
+    The tag worker processes a **qr** tag using iText Barcode functionality.
     """
     # This is the namespace for this object in .NET
     # Without this, it won't work with Python.NET
