@@ -16,6 +16,7 @@ itextpy.load()
 from itextpy.util import disposing
 
 from pathlib import Path
+from sys import stderr
 
 from openai import OpenAI
 
@@ -108,7 +109,7 @@ def parse_response(response_lines: list[str]) -> TableEntry:
             entry_list = entry_list[index - 1].children
         pos = index_seq[-1] - 1
         if pos != len(entry_list):
-            raise Exception("Unexpected index value")
+            print(f"Unexpected index value: {pos} != {len(entry_list)}", file=stderr)
         entry_list.append(TableEntry(caption))
     return result
 
@@ -146,7 +147,8 @@ def generate_toc_data(pages: list[str]) -> TableEntry:
         {"role": "user", "content": "You are about to read text of a PDF document:"},
         {"role": "user", "content": "\n\n".join(pages)},
         {"role": "user", "content": "Generate a numbered table of contents for the document. "
-                                    "Write only the table entries."},
+                                    "Write only the table entries. "
+                                    "Try to use strings from the document as entry names."},
     ]
     response = openai_client.chat.completions.create(
         model=OPENAI_MODEL,
