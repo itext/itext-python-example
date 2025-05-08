@@ -3,6 +3,7 @@
   <ItemGroup>
     <PackageVersion Include="itext" Version="9.1.0" />
     <PackageVersion Include="itext.bouncy-castle-adapter" Version="9.1.0" />
+    <PackageVersion Include="itext.bouncy-castle-fips-adapter" Version="9.1.0" />
     <PackageVersion Include="itext.pdfhtml" Version="6.1.0" />
   </ItemGroup>
 
