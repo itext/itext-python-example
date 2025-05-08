@@ -1,6 +1,8 @@
 import itextpy
 itextpy.load()
 
+from itextpy.util import clr_isinstance, clr_try_cast, disposing
+
 from System import DateTime, DateTimeKind
 from System.Collections.Generic import Dictionary
 from System.IO import File
@@ -11,7 +13,6 @@ from iText.Commons.Bouncycastle.Cert.Ocsp import ICertStatus, IReq
 from iText.Bouncycastleconnector import BouncyCastleFactoryCreator
 from iText.Commons.Bouncycastle.Cert import IX509Certificate
 from iText.Commons.Bouncycastle.Crypto import IPrivateKey
-from itextpy.util import clr_isinstance, clr_try_cast, disposing
 
 _FACTORY = BouncyCastleFactoryCreator.GetFactory()
 
