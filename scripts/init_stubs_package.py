@@ -25,7 +25,7 @@ ITEXT_PY_BINARIES_DIR = ITEXT_PY_PACKAGE_DIR / 'binaries'
 
 # Link for downloading PythonNetStubGenerator.Tool sources
 # This is a commit-pinned link to our fork
-PYTHONNET_STUB_GENERATOR_VERSION = '1.2.2'
+PYTHONNET_STUB_GENERATOR_VERSION = '1.2.3'
 PYTHONNET_STUB_GENERATOR_BASENAME_PREFIX = 'pythonnet-stub-generator-'
 PYTHONNET_STUB_GENERATOR_BASENAME = PYTHONNET_STUB_GENERATOR_BASENAME_PREFIX + PYTHONNET_STUB_GENERATOR_VERSION
 PYTHONNET_STUB_GENERATOR_SRC_LINK = 'https://codeload.github.com/Eswcvlad/pythonnet-stub-generator/zip/refs/tags/' + PYTHONNET_STUB_GENERATOR_VERSION
