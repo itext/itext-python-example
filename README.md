@@ -2,31 +2,30 @@
 
 This aims to create a pip package for iText 9 distribution
 
-# Build 
+# Installation
 
-.NET Core is required for building the package and `dotnet` tool should be
+.NET Core is required for building the package and the `dotnet` tool should be
 available in `PATH`.
 
-To build the package, just run:
+To install the experimental `itextpy` package in your Python environment,
+execute this command at the root of the repository:
 
+```shell
+pip install .
 ```
+
+This will include all the necessary .NET binaries, together with the typing
+stubs for IDE auto-completion.
+
+If you just want to build the `itextpy` wheel without installing it, you can
+do that with the [build](https://pypi.org/project/build/) package:
+
+```shell
+pip install build
 python -m build --wheel
 ```
 
-which should create a file:
-
-```
-./dist/itextpy-9.1.0-py3-none-any.whl
-```
-
-that then you can install by using
-
-```
-pip install ./dist/itextpy-9.1.0-py3-none-any.whl --force-reinstall
-```
-
-This package includes both the binaries and the typing stubs for IDE
-auto-completion.
+This will create the `itextpy` wheel in the `dist` directory.
 
 # Usage
 
