@@ -363,12 +363,12 @@ def generate_init_file(binaries: defaultdict[str, set[str]]) -> bool:
         "    import clr",
     ]
     for dll in sorted(binaries['any']):
-        lines.append(f"    clr.AddReference(str(_BINARIES / '{escape_quote(dll)}'))")
+        lines.append(f"    _init_util.add_reference(clr, _BINARIES / '{escape_quote(dll)}')")
     for os, system in (('win', 'Windows'), ('linux', 'Linux'), ('osx', 'Darwin')):
         if binaries[os]:
             lines.append(f"    if system_name == '{escape_quote(system)}':")
             for dll in sorted(binaries[os]):
-                lines.append(f"        clr.AddReference(str(_BINARIES / '{escape_quote(os)}' / '{escape_quote(dll)}'))")
+                lines.append(f"        _init_util.add_reference(clr, _BINARIES / '{escape_quote(os)}' / '{escape_quote(dll)}')")
     lines.extend((
         "",
         "",
