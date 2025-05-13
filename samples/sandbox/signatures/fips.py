@@ -21,6 +21,7 @@ itextpy.load()
 from itextpy.util import disposing
 
 from pathlib import Path
+import sys
 
 from utils import PemFileHelper
 
@@ -39,7 +40,13 @@ PASSWORD = "testpassphrase"
 
 
 def manipulate_pdf(dest):
-    CryptoServicesRegistrar.SetApprovedOnlyMode(True)
+    try:
+        CryptoServicesRegistrar.SetApprovedOnlyMode(True)
+    except AttributeError:
+        print('signatures/fips.py sample requires '
+              'itext.bouncy-castle-fips-adapter, '
+              'skipping...', file=sys.stderr)
+        return
     chain = PemFileHelper.read_first_chain(SIGN_CERT_PATH)
     private_key = PemFileHelper.read_first_key(SIGN_CERT_PATH, PASSWORD)
     pk = PrivateKeySignature(private_key, DigestAlgorithms.SHA3_512)
