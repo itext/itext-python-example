@@ -33,4 +33,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("multiple_images.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "multiple_images.pdf"))

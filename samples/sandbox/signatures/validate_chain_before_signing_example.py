@@ -5,8 +5,8 @@ from itextpy.util import disposing
 
 from pathlib import Path
 
-from utils import PemFileHelper, TestOcspResponseBuilder
-from clients import TestOcspClient
+from _utils import PemFileHelper, TestOcspResponseBuilder
+from _clients import TestOcspClient
 
 from System import Func
 from System.Collections.Generic import List
@@ -99,5 +99,5 @@ def manipulate_pdf(src, dest):
 if __name__ == "__main__":
     manipulate_pdf(
         str(RESOURCES_DIR / "pdfs" / "hello.pdf"),
-        "validate_chain_before_signing_example.txt",
+        str(SCRIPT_DIR / "validate_chain_before_signing_example.txt"),
     )

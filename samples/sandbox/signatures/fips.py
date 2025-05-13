@@ -23,14 +23,13 @@ from itextpy.util import disposing
 from pathlib import Path
 import sys
 
-from utils import PemFileHelper
+from _utils import PemFileHelper
 
 from System.IO import FileMode, FileStream
 from iText.Kernel.Crypto import DigestAlgorithms
 from iText.Kernel.Pdf import PdfReader, StampingProperties
 from iText.Signatures import PdfSigner, PrivateKeySignature
 from Org.BouncyCastle.Crypto import CryptoServicesRegistrar
-
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
@@ -57,4 +56,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("fips.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "fips.pdf"))

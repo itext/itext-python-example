@@ -52,6 +52,8 @@ document.Add(Paragraph("Hello, World!"))
 document.Close()
 ```
 
+More source code examples are available in the [samples](./samples) directory.
+
 # Limitations
 
 * .NET Core SDK is required for building.
@@ -73,4 +75,4 @@ document.Close()
 * Current 9.1.0 build contains a bug, which prevents running iText with .NET
   Core under Python.NET. For now, we have a workaround here with a binary 
   patch. Patching is done with the `scripts/patch_itext_binaries.py` script.
-  So the `itext.io.dll` binary is not the same, as the one from NuGet.
+  So don't worry, if the `itext.io.dll` binary differs from the one from NuGet.

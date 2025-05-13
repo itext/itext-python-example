@@ -37,4 +37,4 @@ def manipulate_pdf(pdf_dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("convert_svg_string_to_pdf.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "convert_svg_string_to_pdf.pdf"))

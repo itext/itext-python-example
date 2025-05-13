@@ -163,4 +163,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("pdf_ua.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "pdf_ua.pdf"))

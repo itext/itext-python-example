@@ -49,7 +49,7 @@ class CustomHTagWorker(HTagWorker):
 
     def GetElementResult(self) -> IPropertyContainer:
         # FIXME: For some reason super().GetElementResult() doesn't work.
-        #        It just call this method again, causing infinite recursion.
+        #        It just calls this method again, causing infinite recursion.
         element_result = HTagWorker.GetElementResult(self)
         # Duck typing does not really work for .NET types...
         result = clr_try_cast(element_result, Div)
@@ -96,4 +96,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("wtpdf.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "wtpdf.pdf"))

@@ -3,10 +3,14 @@ itextpy.load()
 
 from itextpy.util import disposing
 
+from pathlib import Path
+
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
 from iText.Layout import Document
 from iText.Layout.Element import Cell, Paragraph, Table
 from iText.Layout.Properties import UnitValue
+
+SCRIPT_DIR = Path(__file__).parent.absolute()
 
 
 def manipulate_pdf(dest):
@@ -49,4 +53,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("simple_table_9.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "simple_table_9.pdf"))

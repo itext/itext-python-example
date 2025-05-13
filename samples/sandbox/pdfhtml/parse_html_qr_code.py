@@ -8,7 +8,7 @@ from pathlib import Path
 from System.IO import FileAccess, FileMode, FileStream
 from iText.Html2pdf import ConverterProperties, HtmlConverter
 
-from qr_code_tag import QRCodeTagCssApplierFactory, QRCodeTagWorkerFactory
+from _qr_code_tag import QRCodeTagCssApplierFactory, QRCodeTagWorkerFactory
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
@@ -39,6 +39,6 @@ def manipulate_pdf(html_source, pdf_dest, resource_loc):
 if __name__ == "__main__":
     manipulate_pdf(
         html_source=str(SRC_DIR / "qrcode.html"),
-        pdf_dest="parse_html_qr_code.pdf",
+        pdf_dest=str(SCRIPT_DIR / "parse_html_qr_code.pdf"),
         resource_loc=str(SRC_DIR),
     )

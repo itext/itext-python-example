@@ -34,5 +34,5 @@ def manipulate_pdf(svg_source, pdf_dest):
 if __name__ == "__main__":
     manipulate_pdf(
         svg_source=str(SVG_RESOURCES_DIR / "cauldron.svg"),
-        pdf_dest="convert_svg_to_x_object.pdf",
+        pdf_dest=str(SCRIPT_DIR / "convert_svg_to_x_object.pdf"),
     )

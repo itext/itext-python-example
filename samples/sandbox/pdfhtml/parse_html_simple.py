@@ -23,6 +23,6 @@ def manipulate_pdf(html_source, pdf_dest, resource_loc):
 if __name__ == "__main__":
     manipulate_pdf(
         html_source=str(SRC_DIR / "rainbow.html"),
-        pdf_dest="parse_html_simple.pdf",
+        pdf_dest=str(SCRIPT_DIR / "parse_html_simple.pdf"),
         resource_loc=str(SRC_DIR),
     )

@@ -70,4 +70,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("pdf_a3.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "pdf_a3.pdf"))

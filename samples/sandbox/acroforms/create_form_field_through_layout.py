@@ -3,12 +3,16 @@ itextpy.load()
 
 from itextpy.util import disposing
 
+from pathlib import Path
+
 from iText.Forms.Form.Element import Button, InputField, Radio, TextArea
 from iText.Kernel.Colors import ColorConstants
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
 from iText.Layout import Document
 from iText.Layout.Borders import SolidBorder
 from iText.Layout.Element import Cell, Paragraph, Table
+
+SCRIPT_DIR = Path(__file__).parent.absolute()
 
 
 def manipulate_pdf(dest):
@@ -62,4 +66,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("create_form_field_through_layout.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "create_form_field_through_layout.pdf"))

@@ -84,4 +84,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("signature_example.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "signature_example.pdf"))

@@ -73,4 +73,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("text_footer.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "text_footer.pdf"))

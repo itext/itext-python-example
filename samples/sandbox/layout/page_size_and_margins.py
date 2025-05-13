@@ -3,10 +3,14 @@ itextpy.load()
 
 from itextpy.util import disposing
 
+from pathlib import Path
+
 from iText.Kernel.Geom import PageSize
 from iText.Kernel.Pdf import PdfWriter, PdfDocument
 from iText.Layout import Document
 from iText.Layout.Element import AreaBreak, Paragraph
+
+SCRIPT_DIR = Path(__file__).parent.absolute()
 
 
 def manipulate_pdf(dest):
@@ -40,4 +44,4 @@ def manipulate_pdf(dest):
 
 
 if __name__ == "__main__":
-    manipulate_pdf("page_size_and_margins.pdf")
+    manipulate_pdf(str(SCRIPT_DIR / "page_size_and_margins.pdf"))

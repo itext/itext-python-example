@@ -10,6 +10,8 @@
 # The default Ollama context window is small, so make sure to change it using
 # the instructions below.
 #
+import sys
+
 import itextpy
 itextpy.load()
 
@@ -17,8 +19,6 @@ from itextpy.util import disposing
 
 from pathlib import Path
 from sys import stderr
-
-from openai import OpenAI
 
 from iText.Kernel.Geom import PageSize
 from iText.Kernel.Pdf.Canvas.Parser import PdfTextExtractor
@@ -138,6 +138,13 @@ def add_page_data(toc_data: TableEntry, pages: list[str]) -> None:
 # This function ask the LLM to generate the table of contents for the provided
 # pages of text. The result gets parsed into a tree-like structure.
 def generate_toc_data(pages: list[str]) -> TableEntry:
+    try:
+        from openai import OpenAI
+    except ImportError:
+        print('ai/table_of_contents.py sample requires openai package, '
+              'skipping...', file=sys.stderr)
+        sys.exit()
+
     openai_client = OpenAI(
         base_url=OPENAI_BASE_URL,
         api_key=OPENAI_API_KEY,
@@ -238,4 +245,4 @@ def main(in_path: str, out_path: str) -> None:
 
 
 # Call the function to create a PDF
-main(INPUT_PDF_PATH, "table_of_contents.pdf")
+main(INPUT_PDF_PATH, str(SCRIPT_DIR / "table_of_contents.pdf"))

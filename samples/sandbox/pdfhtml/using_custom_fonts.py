@@ -47,5 +47,5 @@ def manipulate_pdf(html_source, pdf_dest):
 if __name__ == "__main__":
     manipulate_pdf(
         html_source=str(SRC_DIR / "FontExample.html"),
-        pdf_dest="using_custom_fonts.pdf",
+        pdf_dest=str(SCRIPT_DIR / "using_custom_fonts.pdf"),
     )

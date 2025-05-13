@@ -8,7 +8,7 @@ from pathlib import Path
 from System.IO import FileAccess, FileMode, FileShare, FileStream
 from iText.Html2pdf import ConverterProperties, HtmlConverter
 
-from colorblindness import ColorBlindnessCssApplierFactory, ColorBlindnessTransforms
+from _colorblindness import ColorBlindnessCssApplierFactory, ColorBlindnessTransforms
 
 SCRIPT_DIR = Path(__file__).parent.absolute()
 RESOURCES_DIR = SCRIPT_DIR / ".." / ".." / "resources"
@@ -34,6 +34,6 @@ def manipulate_pdf(html_source, pdf_dest, resource_loc):
 if __name__ == "__main__":
     manipulate_pdf(
         html_source=str(SRC_DIR / "rainbow.html"),
-        pdf_dest="parse_html_color_blind.pdf",
+        pdf_dest=str(SCRIPT_DIR / "parse_html_color_blind.pdf"),
         resource_loc=str(SRC_DIR),
     )

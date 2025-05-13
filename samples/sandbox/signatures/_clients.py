@@ -3,7 +3,7 @@ itextpy.load()
 
 from typing import Self
 
-from utils import TestOcspResponseBuilder
+from _utils import TestOcspResponseBuilder
 
 from System.Collections.Generic import Dictionary
 from iText.Bouncycastleconnector import BouncyCastleFactoryCreator
