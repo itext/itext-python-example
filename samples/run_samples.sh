@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
-shopt -s globstar
-for f in "$SCRIPT_DIR"/**/[^_]*.py; do
-    echo "Processing $(basename "$(dirname "$f")")/$(basename "$f")..."
-    python "$f"
-done
+find "$SCRIPT_DIR/sandbox" -type f -name '*.py' ! -name '_*' -exec sh -c                  \
+    'echo "Processing $(basename "$(dirname "$1")")/$(basename "$1")..." && python "$1"'  \
+    find-sh '{}' \;
